@@ -1,0 +1,919 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Second Step Group - Enhanced Interactive Website</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Font Awesome for social media icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css"></link>
+    <!-- Google Font - Inter -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800;900&display=swap" rel="stylesheet"></link>
+
+    <style>
+        /* Custom Tailwind Configuration - Injected via script for dynamic colors */
+        /* These colors are also used in the JS for Three.js */
+        :root {
+            --primary-orange: #FF8C00; /* Brighter orange */
+            --secondary-green: #7CFC00; /* More vibrant green */
+            --dark-blue-bg: #000022; /* Deep blue, main background */
+            --light-page-bg: #0A1F3B; /* Slightly lighter dark blue for sections */
+            --card-bg: #1A3A5B; /* Darker blue-grey for cards */
+            --text-light: #E0F2F7; /* Light text for readability on dark backgrounds */
+            --text-medium: #A0B0C0; /* Medium grey-blue for secondary info */
+            --input-bg: #2A4A6B; /* Darker background for input fields */
+            --input-border: #4A6A8B; /* Border for input fields */
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--dark-blue-bg); /* Apply main background color */
+            color: var(--text-light); /* Default text color */
+            overflow-x: hidden; /* Prevent horizontal scroll due to parallax */
+            cursor: none; /* Hide default cursor */
+        }
+
+        /* Custom Cursor Styling */
+        .custom-cursor {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background-color: var(--primary-orange);
+            mix-blend-mode: difference;
+            pointer-events: none;
+            transform: translate(-50%, -50%);
+            transition: transform 0.1s ease-out, width 0.2s ease-out, height 0.2s ease-out, background-color 0.2s ease-out;
+            z-index: 9999;
+            box-shadow: 0 0 15px var(--primary-orange), 0 0 30px var(--primary-orange);
+            opacity: 0.8;
+        }
+        .custom-cursor.hover-effect {
+            width: 40px;
+            height: 40px;
+            background-color: var(--secondary-green);
+            box-shadow: 0 0 20px var(--secondary-green), 0 0 40px var(--secondary-green);
+        }
+
+        /* Page specific styling and animations */
+        .page-section {
+            display: none; /* Hidden by default, shown via JS */
+            opacity: 0;
+            transform: translateY(20px);
+            transition: opacity 0.8s ease-out, transform 0.8s ease-out;
+        }
+        .page-section.active {
+            display: block;
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* Three.js Canvas Styling */
+        #hero-canvas {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 0;
+            opacity: 0.8;
+        }
+
+        /* Keyframe Animations */
+        @keyframes textPop {
+            0%, 100% { transform: scale(1); opacity: 1; }
+            50% { transform: scale(1.03); opacity: 0.9; }
+        }
+        @keyframes buttonBounce {
+            0%, 100% { transform: translateY(0) scale(1); }
+            20% { transform: translateY(-5px) scale(1.02); }
+            40% { transform: translateY(0) scale(1); }
+        }
+        @keyframes waveBg {
+            0%, 100% { background-size: 200% 200%; background-position: 0% 50%; }
+            50% { background-size: 200% 200%; background-position: 100% 50%; }
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        @keyframes iconSpin {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+        @keyframes iconPulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+        }
+        @keyframes iconShake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-3px); }
+            75% { transform: translateX(3px); }
+        }
+
+
+        .animate-text-pop { animation: textPop 2s ease-in-out infinite alternate; }
+        .animate-button-bounce { animation: buttonBounce 1.5s ease-in-out infinite; }
+        .animate-wave-bg { animation: waveBg 15s ease infinite alternate; }
+        .animate-fade-in { animation: fadeIn 0.8s ease-out forwards; }
+        .group:hover .animate-icon-spin { animation: iconSpin 0.8s linear infinite; }
+        .group:hover .animate-icon-pulse { animation: iconPulse 1s ease-in-out infinite alternate; }
+        .group:hover .animate-icon-shake { animation: iconShake 0.5s ease-in-out infinite alternate; }
+
+
+        /* Specific hover effects for cards */
+        .interactive-card {
+            transition: transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out, border-color 0.3s ease-in-out;
+            border-top-width: 4px; /* Ensure border is visible for color change */
+        }
+        .interactive-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.4);
+        }
+
+        /* Parallax effect for sections */
+        .parallax-bg {
+            background-attachment: fixed;
+            background-position: center;
+            background-repeat: no-repeat;
+            background-size: cover;
+        }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col">
+    <!-- Custom Cursor Element -->
+    <div class="custom-cursor"></div>
+
+    <!-- Tailwind CSS dynamic configuration injection -->
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        'primary-orange': 'var(--primary-orange)',
+                        'secondary-green': 'var(--secondary-green)',
+                        'dark-blue-bg': 'var(--dark-blue-bg)',
+                        'light-page-bg': 'var(--light-page-bg)',
+                        'card-bg': 'var(--card-bg)',
+                        'text-light': 'var(--text-light)',
+                        'text-medium': 'var(--text-medium)',
+                        'input-bg': 'var(--input-bg)',
+                        'input-border': 'var(--input-border)',
+                    },
+                    keyframes: {
+                        gradientShift: {
+                            '0%, 100%': { backgroundPosition: '0% 50%' },
+                            '50%': { backgroundPosition: '100% 50%' },
+                        },
+                        fadeIn: {
+                            'from': { opacity: '0', transform: 'translateY(20px)' },
+                            'to': { opacity: '1', transform: 'translateY(0)' },
+                        },
+                        fadeOut: {
+                            'from': { opacity: '1', transform: 'translateY(0)' },
+                            'to': { opacity: '0', transform: 'translateY(20px)' },
+                        },
+                        slideInRight: {
+                            'from': { transform: 'translateX(100%)' },
+                            'to': { transform: 'translateX(0)' },
+                        },
+                        slideOutRight: {
+                            'from': { transform: 'translateX(0)' },
+                            'to': { transform: 'translateX(100%)' },
+                        },
+                        textPop: {
+                            '0%, 100%': { transform: 'scale(1)', opacity: '1' },
+                            '50%': { transform: 'scale(1.03)', opacity: '0.9)' },
+                        },
+                        buttonBounce: {
+                            '0%, 100%': { transform: 'translateY(0) scale(1)' },
+                            '20%': { transform: 'translateY(-5px) scale(1.02)' },
+                            '40%': { transform: 'translateY(0) scale(1)' },
+                        },
+                        pulseSlow: {
+                            '0%, 100%': { opacity: '0.1' },
+                            '50%': { opacity: '0.2' },
+                        },
+                        pulseStrong: {
+                            '0%, 100%': { transform: 'scale(1)' },
+                            '50%': { transform: 'scale(1.1)' },
+                        },
+                        iconSpin: {
+                            'from': { transform: 'rotate(0deg)' },
+                            'to': { transform: 'rotate(360deg)' },
+                        },
+                        iconPulse: {
+                            '0%, 100%': { transform: 'scale(1)' },
+                            '50%': { transform: 'scale(1.1)' },
+                        },
+                        iconShake: {
+                            '0%, 100%': { transform: 'translateX(0)' },
+                            '25%': { transform: 'translateX(-3px)' },
+                            '75%': { transform: 'translateX(3px)' },
+                        },
+                        waveBg: {
+                            '0%, 100%': { backgroundSize: '200% 200%', backgroundPosition: '0% 50%' },
+                            '50%': { backgroundSize: '200% 200%', backgroundPosition: '100% 50%' },
+                        },
+                        fadeInUp: {
+                            'from': { opacity: '0', transform: 'translateY(30px)' },
+                            'to': { opacity: '1', transform: 'translateY(0)' },
+                        },
+                        cardFadeIn: {
+                            'from': { opacity: '0', transform: 'translateY(50px)' },
+                            'to': { opacity: '1', transform: 'translateY(0)' },
+                        }
+                    },
+                    animation: {
+                        'gradient-shift': 'gradientShift 10s ease infinite alternate',
+                        'fade-in': 'fadeIn 0.8s ease-out',
+                        'fade-out': 'fadeOut 0.8s ease-in forwards',
+                        'slide-in-right': 'slideInRight 0.5s ease-out',
+                        'slide-out-right': 'slideOutRight 0.5s ease-in forwards',
+                        'text-pop': 'textPop 2s ease-in-out infinite alternate',
+                        'button-bounce': 'buttonBounce 1.5s ease-in-out infinite',
+                        'pulse-slow': 'pulseSlow 4s infinite alternate',
+                        'pulse-strong': 'pulseStrong 1s infinite alternate',
+                        'icon-spin': 'iconSpin 0.8s linear infinite',
+                        'icon-pulse': 'iconPulse 1s ease-in-out infinite alternate',
+                        'icon-shake': 'iconShake 0.5s ease-in-out infinite alternate',
+                        'wave-bg': 'waveBg 15s ease infinite alternate',
+                        'fade-in-up': 'fadeInUp 1s ease-out',
+                        'card-fade-in': 'cardFadeIn 0.8s ease-out forwards',
+                    }
+                }
+            }
+        }
+    </script>
+
+    <!-- Header Section -->
+    <header class="bg-dark-blue-bg text-text-light p-4 shadow-lg flex justify-between items-center rounded-b-xl relative z-40">
+        <div class="flex items-center">
+            <img src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEgcYc-4tZgs406tAscwCZ2wFOR1yLPmSa0JmNS9owp1jDy8WLV_kVPKlg2TNbm9YMfdr6A4hwlgr3FG79SYkuK71X48Z55Bi0AlmbzQ-UZJj5gRJY0ZAZ27NCfse-0LCn8cxSImqsswv-Z9u6uUUDyJw4thx7tNVdNQrc4Fe9aQQWwm7Txds_ZTQQnqEs0/s452/image.png" alt="Second Step Group Logo" class="h-14 w-auto rounded-lg shadow-md" />
+            <h1 class="text-3xl lg:text-4xl font-extrabold ml-4 font-inter tracking-tight text-primary-orange">Second Step Group</h1>
+        </div>
+        <!-- Desktop Navigation -->
+        <nav class="hidden md:flex space-x-2 lg:space-x-6">
+            <button data-page="home" class="nav-btn px-4 py-2 text-lg text-primary-orange hover:bg-primary-orange hover:text-dark-blue-bg rounded-lg transition duration-300 ease-in-out transform hover:scale-105 font-semibold shadow-md">Home</button>
+            <button data-page="about" class="nav-btn px-4 py-2 text-lg text-primary-orange hover:bg-primary-orange hover:text-dark-blue-bg rounded-lg transition duration-300 ease-in-out transform hover:scale-105 font-semibold shadow-md">About Us</button>
+            <button data-page="services" class="nav-btn px-4 py-2 text-lg text-primary-orange hover:bg-primary-orange hover:text-dark-blue-bg rounded-lg transition duration-300 ease-in-out transform hover:scale-105 font-semibold shadow-md">Services</button>
+            <button data-page="contact" class="nav-btn px-4 py-2 text-lg text-primary-orange hover:bg-primary-orange hover:text-dark-blue-bg rounded-lg transition duration-300 ease-in-out transform hover:scale-105 font-semibold shadow-md">Contact</button>
+        </nav>
+        <!-- Mobile Menu Button -->
+        <button id="mobile-menu-toggle" class="md:hidden text-primary-orange focus:outline-none p-2 rounded-md hover:bg-primary-orange hover:text-dark-blue-bg transition duration-300">
+            <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7"></path>
+            </svg>
+        </button>
+    </header>
+
+    <!-- Mobile Navigation Sidebar -->
+    <div id="mobile-menu" class="fixed inset-y-0 right-0 w-64 bg-dark-blue-bg text-text-light shadow-xl transform translate-x-full transition-transform duration-300 ease-in-out z-50 md:hidden rounded-l-xl">
+        <div class="p-4 flex justify-between items-center border-b border-primary-orange">
+            <h2 class="text-2xl font-bold font-inter text-primary-orange">Menu</h2>
+            <button id="mobile-menu-close" class="text-primary-orange focus:outline-none p-2 rounded-md hover:bg-primary-orange hover:text-dark-blue-bg transition duration-300">
+                <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                </svg>
+            </button>
+        </div>
+        <nav class="flex flex-col p-4 space-y-4">
+            <button data-page="home" class="nav-btn flex items-center px-4 py-3 text-primary-orange hover:bg-primary-orange hover:text-dark-blue-bg rounded-lg transition duration-300 ease-in-out font-semibold text-lg shadow-md">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-lightbulb mr-3"><path d="M15 14c.2-1 .7-1.7 1.5-2.5 1-.9 1.5-2.2 1.5-3.5A6 6 0 0 0 6 3c0 1.3.5 2.6 1.5 3.5.8.8 1.3 1.5 1.5 2.5"/><path d="M9 18h6"/><path d="M10 22h4"/><path d="M11 17h2"/><path d="M12 3v1"/></svg> Home
+            </button>
+            <button data-page="about" class="nav-btn flex items-center px-4 py-3 text-primary-orange hover:bg-primary-orange hover:text-dark-blue-bg rounded-lg transition duration-300 ease-in-out font-semibold text-lg shadow-md">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-info mr-3"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><path d="M12 8h.01"/></svg> About Us
+            </button>
+            <button data-page="services" class="nav-btn flex items-center px-4 py-3 text-primary-orange hover:bg-primary-orange hover:text-dark-blue-bg rounded-lg transition duration-300 ease-in-out font-semibold text-lg shadow-md">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-briefcase mr-3"><rect width="20" height="14" x="2" y="7" rx="2" ry="2"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/></svg> Services
+            </button>
+            <button data-page="contact" class="nav-btn flex items-center px-4 py-3 text-primary-orange hover:bg-primary-orange hover:text-dark-blue-bg rounded-lg transition duration-300 ease-in-out font-semibold text-lg shadow-md">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-mail mr-3"><rect width="20" height="16" x="2" y="4" rx="2"/><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/></svg> Contact
+            </button>
+        </nav>
+    </div>
+
+    <!-- Main Content Area -->
+    <main id="main-content" class="flex-grow container mx-auto p-4 md:p-6 lg:p-8 mt-4 overflow-y-auto relative">
+
+        <!-- Home Page Section -->
+        <section id="home-page" class="page-section active animate-fade-in">
+            <!-- Hero Section -->
+            <div class="relative bg-dark-blue-bg text-text-light py-24 px-6 md:px-10 rounded-xl shadow-2xl overflow-hidden mb-12">
+                <!-- Three.js Animation Canvas -->
+                <canvas id="hero-canvas"></canvas>
+                <div class="relative z-10 max-w-5xl mx-auto text-center">
+                    <h2 class="text-4xl sm:text-5xl lg:text-6xl font-extrabold mb-6 leading-tight font-inter drop-shadow-lg animate-text-pop text-primary-orange">
+                        Empowering Your <span class="text-secondary-green">Next Big Leap</span>
+                    </h2>
+                    <p class="text-text-light text-lg sm:text-xl leading-relaxed mb-8 drop-shadow-md animate-fade-in">
+                        At Second Step Group, we provide strategic insights and innovative solutions to propel your business forward. We are your trusted partner in navigating complex challenges and unlocking new opportunities for growth.
+                    </p>
+                    <button data-page="services" class="nav-btn bg-primary-orange text-dark-blue-bg px-10 py-4 rounded-full text-xl font-bold shadow-xl hover:bg-secondary-green hover:text-text-light transition duration-300 ease-in-out transform hover:scale-105 flex items-center justify-center mx-auto group animate-button-bounce">
+                        Explore Our Solutions <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-chevron-right ml-3 transition-transform duration-300 group-hover:translate-x-1"><path d="m9 18 6-6-6-6"/></svg>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Feature Showcase Section -->
+            <div class="p-6 md:p-10 bg-light-page-bg rounded-xl shadow-xl mb-12 parallax-bg" style="background-image: url('https://placehold.co/1200x800/0A1F3B/1A3A5B?text=Abstract+Background');">
+                <h2 class="text-3xl md:text-4xl font-extrabold text-primary-orange mb-8 text-center border-b-4 border-primary-orange pb-3 font-inter">What We Offer</h2>
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                    <div class="interactive-card p-6 rounded-xl shadow-lg bg-card-bg border-t-primary-orange group">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="56" height="56" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-zap text-primary-orange mb-4 mx-auto animate-icon-spin"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8Z"/></svg>
+                        <h3 class="text-2xl font-bold text-text-light mb-3 font-inter">Innovative Strategies</h3>
+                        <p class="text-text-medium">Develop cutting-edge strategies that adapt to market shifts and ensure long-term success.</p>
+                    </div>
+                    <div class="interactive-card p-6 rounded-xl shadow-lg bg-card-bg border-t-secondary-green group">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="56" height="56" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-rocket text-secondary-green mb-4 mx-auto animate-icon-pulse"><path d="M4.5 16.5c-1.5 1.26-2 5-2 5s3.74-.5 5-2c.75-.75 1.36-2.07 1.63-3.54.18-1-.19-2.17-.72-2.88C9.5 6.5 9 4 9 4s2.5.5 3.5 1.5c.71.71 1.05 1.93.82 3.31-.22 1.39-.78 2.54-1.34 3.1z"/><path d="M14.5 12.5l2.5 2.5c2.24 2.24 2.94 5.73 1.72 7L12.5 14.5l1.5-1.5z"/><path d="M17 18l-1 1"/><path d="M19 15l-1 1"/></svg>
+                        <h3 class="text-2xl font-bold text-text-light mb-3 font-inter">Accelerated Growth</h3>
+                        <p class="text-text-medium">Implement solutions designed to scale your operations and significantly boost your revenue.</p>
+                    </div>
+                    <div class="interactive-card p-6 rounded-xl shadow-lg bg-card-bg border-t-primary-orange group">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="56" height="56" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-handshake text-primary-orange mb-4 mx-auto animate-icon-shake"><path d="M11 15h2a2 2 0 1 0 0-4h-3c-.6 0-1.1.2-1.5.6L2 17"/><path d="m22 2-5 5"/><path d="M17 14V4l4 4L22 9"/><path d="m9 10 3 3L22 3"/></svg>
+                        <h3 class="text-2xl font-bold text-text-light mb-3 font-inter">Trusted Partnership</h3>
+                        <p class="text-text-medium">Build lasting relationships based on trust, transparency, and mutual success.</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Call to Action Section -->
+            <div class="relative bg-secondary-green text-dark-blue-bg py-16 px-6 md:px-10 rounded-xl shadow-2xl overflow-hidden mb-12 flex flex-col md:flex-row items-center justify-between animate-fade-in">
+                <div class="absolute inset-0 z-0 opacity-10 animate-wave-bg"></div>
+                <div class="relative z-10 text-center md:text-left md:w-2/3 mb-6 md:mb-0">
+                    <h2 class="text-3xl md:text-4xl font-extrabold mb-4 font-inter leading-tight text-dark-blue-bg">Ready to Take Your Second Step?</h2>
+                    <p class="text-dark-blue-bg text-lg">
+                        Let's discuss how our expertise can drive your next big success. Contact us today for a personalized consultation.
+                    </p>
+                </div>
+                <div class="relative z-10 md:w-1/3 flex justify-center md:justify-end">
+                    <button data-page="contact" class="nav-btn bg-primary-orange text-dark-blue-bg px-8 py-4 rounded-full text-xl font-bold shadow-xl hover:bg-dark-blue-bg hover:text-primary-orange transition duration-300 ease-in-out transform hover:scale-105 group">
+                        Get Started <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-chevron-right ml-2 transition-transform duration-300 group-hover:translate-x-1"><path d="m9 18 6-6-6-6"/></svg>
+                    </button>
+                </div>
+            </div>
+        </section>
+
+        <!-- About Us Page Section -->
+        <section id="about-page" class="page-section animate-fade-in">
+            <h2 class="text-4xl font-extrabold text-primary-orange mb-6 border-b-4 border-primary-orange pb-2 font-inter">About Second Step Group</h2>
+            <p class="text-text-medium text-lg leading-relaxed mb-6">
+                Founded on the principles of innovation, integrity, and client-centricity, Second Step Group has grown into a trusted partner for businesses seeking sustainable growth and operational excellence. Our team comprises seasoned experts from diverse fields, united by a shared passion for delivering exceptional results.
+            </p>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8 mb-8">
+                <div class="interactive-card p-6 rounded-xl shadow-md bg-card-bg border-t-primary-orange">
+                    <h3 class="text-3xl font-bold text-primary-orange mb-4 font-inter">Our Mission</h3>
+                    <p class="text-text-medium leading-relaxed">
+                        To empower our clients with the knowledge, tools, and strategies necessary to overcome challenges and seize opportunities, ensuring their continued success in an ever-evolving global market. We are committed to fostering long-term partnerships built on trust and mutual growth.
+                    </p>
+                </div>
+                <div class="interactive-card p-6 rounded-xl shadow-md bg-card-bg border-t-secondary-green">
+                    <h3 class="text-3xl font-bold text-secondary-green mb-4 font-inter">Our Vision</h3>
+                    <p class="text-text-medium leading-relaxed">
+                        To be the leading strategic partner recognized for transforming businesses and fostering a culture of continuous improvement and innovation. We aspire to set new benchmarks in consulting and solution delivery.
+                    </p>
+                </div>
+            </div>
+
+            <h3 class="text-3xl font-bold text-primary-orange mb-4 font-inter">Our Values</h3>
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
+                <div class="interactive-card p-5 rounded-lg shadow-sm border border-input-border flex items-start space-x-3 bg-card-bg group">
+                    <div class="flex-shrink-0"><svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-award text-primary-orange animate-icon-pulse"><circle cx="12" cy="8" r="7"/><path d="M8.21 13.89 7 22l5-3 5 3-1.21-8.11"/></svg></div>
+                    <div>
+                        <h4 class="text-xl font-bold text-text-light mb-1">Client Success</h4>
+                        <p class="text-text-medium text-sm">Your growth is our priority, driving every decision and action we take.</p>
+                    </div>
+                </div>
+                <div class="interactive-card p-5 rounded-lg shadow-sm border border-input-border flex items-start space-x-3 bg-card-bg group">
+                    <div class="flex-shrink-0"><svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-lightbulb text-secondary-green animate-icon-spin"><path d="M15 14c.2-1 .7-1.7 1.5-2.5 1-.9 1.5-2.2 1.5-3.5A6 6 0 0 0 6 3c0 1.3.5 2.6 1.5 3.5.8.8 1.3 1.5 1.5 2.5"/><path d="M9 18h6"/><path d="M10 22h4"/><path d="M11 17h2"/><path d="M12 3v1"/></svg></div>
+                    <div>
+                        <h4 class="text-xl font-bold text-text-light mb-1">Innovation</h4>
+                        <p class="text-text-medium text-sm">Constantly seeking new and better ways to solve complex problems and create value.</p>
+                    </div>
+                </div>
+                <div class="interactive-card p-5 rounded-lg shadow-sm border border-input-border flex items-start space-x-3 bg-card-bg group">
+                    <div class="flex-shrink-0"><svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-info text-primary-orange animate-icon-shake"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><path d="M12 8h.01"/></svg></div>
+                    <div>
+                        <h4 class="text-xl font-bold text-text-light mb-1">Integrity</h4>
+                        <p class="text-text-medium text-sm">Upholding the highest ethical standards, fostering trust and transparency.</p>
+                    </div>
+                </div>
+                <div class="interactive-card p-5 rounded-lg shadow-sm border border-input-border flex items-start space-x-3 bg-card-bg group">
+                    <div class="flex-shrink-0"><svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-stethoscope text-secondary-green animate-icon-pulse"><path d="M17 10v4a2 2 0 0 1-2 2h-3a2 2 0 0 1-2-2v-4"/><path d="M14 10h-2"/><path d="M12 16v2a2 2 0 0 0 2 2h3a2 2 0 0 0 2-2v-2"/><path d="M20 2v2a2 2 0 0 1-2 2h-3a2 2 0 0 1-2-2V2"/><path d="M4 2v2a2 2 0 0 0 2 2h3a2 2 0 0 0 2-2V2"/></svg></div>
+                    <div>
+                        <h4 class="text-xl font-bold text-text-light mb-1">Excellence</h4>
+                        <p class="text-text-medium text-sm">Delivering superior quality, measurable results, and exceeding expectations.</p>
+                    </div>
+                </div>
+                <div class="interactive-card p-5 rounded-lg shadow-sm border border-input-border flex items-start space-x-3 bg-card-bg group">
+                    <div class="flex-shrink-0"><svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-users text-primary-orange animate-icon-spin"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg></div>
+                    <div>
+                        <h4 class="text-xl font-bold text-text-light mb-1">Collaboration</h4>
+                        <p class="text-text-medium text-sm">Working together with clients as true partners, leveraging collective strengths.</p>
+                    </div>
+                </div>
+                <div class="interactive-card p-5 rounded-lg shadow-sm border border-input-border flex items-start space-x-3 bg-card-bg group">
+                    <div class="flex-shrink-0"><svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-handshake text-secondary-green animate-icon-shake"><path d="M11 15h2a2 2 0 1 0 0-4h-3c-.6 0-1.1.2-1.5.6L2 17"/><path d="m22 2-5 5"/><path d="M17 14V4l4 4L22 9"/><path d="m9 10 3 3L22 3"/></svg></div>
+                    <div>
+                        <h4 class="text-xl font-bold text-text-light mb-1">Adaptability</h4>
+                        <p class="text-text-medium text-sm">Embracing change and evolving our strategies to meet dynamic market needs.</p>
+                    </div>
+                </div>
+            </div>
+
+            <h3 class="text-3xl font-bold text-primary-orange mb-4 font-inter">Our Team</h3>
+            <p class="text-lg text-text-medium leading-relaxed mb-6">
+                Our diverse team brings together decades of experience in business strategy, technology, finance, marketing, and operations. We pride ourselves on our collaborative approach and our ability to tailor solutions that meet the unique needs of each client. We believe in continuous learning and adapting to the dynamic global market to ensure our clients always receive the most relevant and effective advice. Every member of our team is committed to your success.
+            </p>
+        </section>
+
+        <!-- Services Page Section -->
+        <section id="services-page" class="page-section animate-fade-in">
+            <h2 class="text-4xl font-extrabold text-primary-orange mb-6 border-b-4 border-primary-orange pb-2 font-inter">Our Comprehensive Services</h2>
+            <p class="text-lg text-text-medium leading-relaxed mb-8">
+                Second Step Group offers a diverse range of services designed to address the multifaceted needs of modern businesses. We combine deep industry knowledge with innovative methodologies to deliver tangible results and drive sustainable growth. Explore our key service areas below.
+            </p>
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mb-8">
+                <div class="interactive-card p-6 rounded-xl shadow-lg bg-card-bg border-t-secondary-green group">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-briefcase text-secondary-green animate-icon-pulse"><rect width="20" height="14" x="2" y="7" rx="2" ry="2"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/></svg>
+                    <h3 class="text-2xl font-bold text-text-light mb-3 mt-4 font-inter">Business Consulting & Strategy</h3>
+                    <p class="text-text-medium">Expert guidance on business strategy, market entry, organizational development, and operational efficiency. We help you chart the right course.</p>
+                </div>
+                <div class="interactive-card p-6 rounded-xl shadow-lg bg-card-bg border-t-primary-orange group">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-settings text-primary-orange animate-icon-spin"><path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.78 1.28a2 2 0 0 0 .73 2.73l.04.02a2 2 0 0 1 .97 1.91V14a2 2 0 0 1-.97 1.91l-.04.02a2 2 0 0 0-.73 2.73l.78 1.28a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.78-1.28a2 2 0 0 0-.73-2.73l-.04-.02a2 2 0 0 1-.97-1.91V10a2 2 0 0 1 .97-1.91l.04-.02a2 2 0 0 0 .73-2.73l-.78-1.28a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z"/><circle cx="12" cy="12" r="3"/></svg>
+                    <h3 class="text-2xl font-bold text-text-light mb-3 mt-4 font-inter">Technology & IT Solutions</h3>
+                    <p class="text-text-medium">Custom software development, cloud migration, cybersecurity, and IT infrastructure management. Powering your digital future.</p>
+                </div>
+                <div class="interactive-card p-6 rounded-xl shadow-lg bg-card-bg border-t-secondary-green group">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-package text-secondary-green animate-icon-pulse"><path d="m7.5 4.27 9 5.15"/><path d="M2.5 8.67 12 14l9.5-5.33"/><path d="M12 22V14"/><path d="M2.5 12.55v5.93L12 22l9.5-5.52V8.67"/><path d="M7.5 19.07V4.27"/><path d="M16.5 19.07V9.42"/></svg>
+                    <h3 class="text-2xl font-bold text-text-light mb-3 mt-4 font-inter">Logistics & Supply Chain Management</h3>
+                    <p class="text-text-medium">Optimize your supply chain with warehousing, distribution, freight management, and inventory optimization. Seamless operations, every step.</p>
+                </div>
+                <div class="interactive-card p-6 rounded-xl shadow-lg bg-card-bg border-t-primary-orange group">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-flask-conical text-primary-orange animate-icon-spin"><path d="M10 2v6.3a2 2 0 0 1-1.1.8L4 12v5a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-5l-4.9-2.9a2 2 0 0 1-1.1-.8V2Z"/><path d="M8 22h8"/><path d="M14 22v-4a2 2 0 0 0-2-2h-2a2 2 0 0 0-2 2v4"/></svg>
+                    <h3 class="text-2xl font-bold text-text-light mb-3 mt-4 font-inter">Research & Development</h3>
+                    <p class="text-text-medium">Investing in cutting-edge R&D to bring innovative products and services to market. Stay ahead, always.</p>
+                </div>
+                <div class="interactive-card p-6 rounded-xl shadow-lg bg-card-bg border-t-secondary-green group">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-stethoscope text-secondary-green animate-icon-pulse"><path d="M17 10v4a2 2 0 0 1-2 2h-3a2 2 0 0 1-2-2v-4"/><path d="M14 10h-2"/><path d="M12 16v2a2 2 0 0 0 2 2h3a2 2 0 0 0 2-2v-2"/><path d="M20 2v2a2 2 0 0 1-2 2h-3a2 2 0 0 1-2-2V2"/><path d="M4 2v2a2 2 0 0 0 2 2h3a2 2 0 0 0 2-2V2"/></svg>
+                    <h3 class="text-2xl font-bold text-text-light mb-3 mt-4 font-inter">Healthcare Solutions</h3>
+                    <p class="text-text-medium">Specialized consulting and technology solutions for digital transformation and patient management. Modernizing healthcare delivery.</p>
+                </div>
+                <div class="interactive-card p-6 rounded-xl shadow-lg bg-card-bg border-t-primary-orange group">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-trending-up text-primary-orange animate-icon-shake"><polyline points="22 7 13.5 15.5 8.5 10.5 2 17"/><polyline points="16 7 22 7 22 13"/></svg>
+                    <h3 class="text-2xl font-bold text-text-light mb-3 mt-4 font-inter">Market Analysis & Growth</h3>
+                    <p class="text-text-medium">In-depth market research and growth strategies to identify new opportunities and expand your reach. Unlock your market potential.</p>
+                </div>
+            </div>
+            <div class="text-center mt-8">
+                <button data-page="contact" class="nav-btn bg-primary-orange text-dark-blue-bg px-8 py-4 rounded-full text-xl font-bold shadow-lg hover:bg-secondary-green hover:text-text-light transition duration-300 ease-in-out transform hover:scale-105 flex items-center justify-center mx-auto group">
+                    Get a Free Consultation <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-chevron-right ml-2 transition-transform duration-300 group-hover:translate-x-1"><path d="m9 18 6-6-6-6"/></svg>
+                </button>
+            </div>
+        </section>
+
+        <!-- Contact Page Section -->
+        <section id="contact-page" class="page-section animate-fade-in">
+            <h2 class="text-4xl font-extrabold text-primary-orange mb-6 border-b-4 border-primary-orange pb-2 font-inter">Connect With Us</h2>
+            <p class="text-lg text-text-medium leading-relaxed mb-8">
+                We'd love to hear from you! Whether you have a question about our services, need support, or just want to say hello, feel free to reach out using the details below or by filling out our contact form. Our team is ready to assist you.
+            </p>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8 mb-8">
+                <div class="interactive-card p-6 rounded-xl shadow-md bg-card-bg border-t-primary-orange">
+                    <h3 class="text-2xl font-bold text-primary-orange mb-3 font-inter">Our Global Office</h3>
+                    <p class="text-text-medium">123 Business Avenue</p>
+                    <p class="text-text-medium">Suite 456</p>
+                    <p class="text-text-medium">Metropolis, State 78901</p>
+                    <p class="text-text-medium">Country</p>
+                    <div class="mt-4">
+                        <iframe
+                            src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3153.297486450897!2d28.9749594153173!3d41.0082370792996!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!5e0!3m2!1sen!2str!4v1678901234567!5m2!1sen!2str"
+                            width="100%"
+                            height="200"
+                            style="border: 0; border-radius: 12px;"
+                            allowfullscreen=""
+                            loading="lazy"
+                            referrerpolicy="no-referrer-when-downgrade"
+                            title="Office Location Map"
+                        ></iframe>
+                    </div>
+                </div>
+                <div class="interactive-card p-6 rounded-xl shadow-md bg-card-bg border-t-secondary-green">
+                    <h3 class="text-2xl font-bold text-secondary-green mb-3 font-inter">Get in Touch</h3>
+                    <p class="text-text-medium mb-2">Email: <a href="mailto:info@secondstepgroup.com" class="text-primary-orange hover:underline">info@secondstepgroup.com</a></p>
+                    <p class="text-text-medium mb-2">Phone: <a href="tel:+1234567890" class="text-primary-orange hover:underline">+1 (234) 567-890</a></p>
+                    <p class="text-text-medium">Fax: +1 (234) 567-891</p>
+                    <div class="mt-6">
+                        <h4 class="text-xl font-bold text-text-light mb-3">Business Hours:</h4>
+                        <p class="text-text-medium">Monday - Friday: 9:00 AM - 5:00 PM (Local Time)</p>
+                        <p class="text-text-medium">Saturday - Sunday: Closed</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="bg-card-bg p-6 rounded-xl shadow-md border-t-4 border-primary-orange mb-8">
+                <h3 class="text-2xl font-bold text-primary-orange mb-4 font-inter">Send Us a Message</h3>
+                <form class="space-y-4">
+                    <div>
+                        <label for="name" class="block text-text-light text-lg font-semibold mb-2">Your Name</label>
+                        <input type="text" id="name" name="name" class="w-full p-3 border border-input-border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-orange shadow-sm bg-input-bg text-text-light" placeholder="John Doe" />
+                    </div>
+                    <div>
+                        <label for="email" class="block text-text-light text-lg font-semibold mb-2">Your Email</label>
+                        <input type="email" id="email" name="email" class="w-full p-3 border border-input-border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-orange shadow-sm bg-input-bg text-text-light" placeholder="john.doe@example.com" />
+                    </div>
+                    <div>
+                        <label for="subject" class="block text-text-light text-lg font-semibold mb-2">Subject</label>
+                        <input type="text" id="subject" name="subject" class="w-full p-3 border border-input-border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-orange shadow-sm bg-input-bg text-text-light" placeholder="Inquiry about services" />
+                    </div>
+                    <div>
+                        <label for="message" class="block text-text-light text-lg font-semibold mb-2">Message</label>
+                        <textarea id="message" name="message" rows="5" class="w-full p-3 border border-input-border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-orange shadow-sm bg-input-bg text-text-light" placeholder="How can we help you?"></textarea>
+                    </div>
+                    <button type="submit" class="bg-primary-orange text-dark-blue-bg px-6 py-3 rounded-full text-lg font-bold shadow-lg hover:bg-secondary-green hover:text-text-light transition duration-300 ease-in-out transform hover:scale-105 flex items-center justify-center group">
+                        Send Message <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-chevron-right ml-2 transition-transform duration-300 group-hover:translate-x-1"><path d="m9 18 6-6-6-6"/></svg>
+                    </button>
+                </form>
+            </div>
+        </section>
+
+        <!-- Scroll to Top Button -->
+        <button id="scroll-to-top" class="fixed bottom-6 right-6 bg-primary-orange text-dark-blue-bg p-3 rounded-full shadow-lg hover:bg-secondary-green hover:text-text-light transition duration-300 ease-in-out transform hover:scale-110 z-50 hidden" aria-label="Scroll to top">
+            <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-chevron-up"><path d="m18 15-6-6-6 6"/></svg>
+        </button>
+
+    </main>
+
+    <!-- Footer Section -->
+    <footer class="bg-dark-blue-bg text-text-light p-6 md:p-8 text-center mt-8 shadow-inner rounded-t-xl">
+        <div class="flex flex-col md:flex-row justify-around items-center mb-4 space-y-6 md:space-y-0">
+            <div class="text-left md:text-center">
+                <h3 class="text-xl font-bold mb-3 font-inter text-primary-orange">Quick Links</h3>
+                <ul class="space-y-2">
+                    <li><button data-page="home" class="nav-btn hover:underline text-primary-orange transition duration-200">Home</button></li>
+                    <li><button data-page="about" class="nav-btn hover:underline text-primary-orange transition duration-200">About Us</button></li>
+                    <li><button data-page="services" class="nav-btn hover:underline text-primary-orange transition duration-200">Services</button></li>
+                    <li><button data-page="contact" class="nav-btn hover:underline text-primary-orange transition duration-200">Contact</button></li>
+                </ul>
+            </div>
+            <div class="text-left md:text-center">
+                <h3 class="text-xl font-bold mb-3 font-inter text-primary-orange">Contact Info</h3>
+                <p class="text-text-medium mb-1">Email: <a href="mailto:info@secondstepgroup.com" class="text-primary-orange hover:underline">info@secondstepgroup.com</a></p>
+                <p class="text-text-medium mb-1">Phone: <a href="tel:+1234567890" class="text-primary-orange hover:underline">+1 (234) 567-890</a></p>
+                <p class="text-text-medium">Fax: +1 (234) 567-891</p>
+            </div>
+            <div class="text-left md:text-center">
+                <h3 class="text-xl font-bold mb-3 font-inter text-primary-orange">Follow Us</h3>
+                <div class="flex justify-center space-x-4">
+                    <a href="#" class="text-primary-orange hover:text-secondary-green transition duration-300 transform hover:scale-110"><i class="fab fa-facebook-f text-2xl"></i></a>
+                    <a href="#" class="text-primary-orange hover:text-secondary-green transition duration-300 transform hover:scale-110"><i class="fab fa-twitter text-2xl"></i></a>
+                    <a href="#" class="text-primary-orange hover:text-secondary-green transition duration-300 transform hover:scale-110"><i class="fab fa-linkedin-in text-2xl"></i></a>
+                    <a href="#" class="text-primary-orange hover:text-secondary-green transition duration-300 transform hover:scale-110"><i class="fab fa-instagram text-2xl"></i></a>
+                </div>
+            </div>
+        </div>
+        <p class="text-gray-400 text-sm mt-6">&copy; <span id="current-year"></span> Second Step Group. All rights reserved.</p>
+    </footer>
+
+    <!-- Three.js CDN -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+
+    <script>
+        // --- Global Variables and Constants ---
+        const tailwindConfigColors = {
+            'primary-orange': 'var(--primary-orange)',
+            'secondary-green': 'var(--secondary-green)',
+            'dark-blue-bg': 'var(--dark-blue-bg)',
+            'light-page-bg': 'var(--light-page-bg)',
+            'card-bg': 'var(--card-bg)',
+            'text-light': 'var(--text-light)',
+            'text-medium': 'var(--text-medium)',
+            'input-bg': 'var(--input-bg)',
+            'input-border': 'var(--input-border)',
+        };
+
+        let currentPage = 'home';
+        const mainContent = document.getElementById('main-content');
+        const mobileMenu = document.getElementById('mobile-menu');
+        const mobileMenuToggle = document.getElementById('mobile-menu-toggle');
+        const mobileMenuClose = document.getElementById('mobile-menu-close');
+        const navButtons = document.querySelectorAll('.nav-btn');
+        const scrollToTopBtn = document.getElementById('scroll-to-top');
+        const customCursor = document.querySelector('.custom-cursor');
+
+        // --- Utility Functions ---
+
+        /**
+         * Navigates to a specified page section.
+         * @param {string} pageId - The ID of the page section to navigate to (e.g., 'home', 'about').
+         */
+        function navigateToPage(pageId) {
+            // Hide all page sections
+            document.querySelectorAll('.page-section').forEach(section => {
+                section.classList.remove('active');
+            });
+
+            // Show the target page section
+            const targetPage = document.getElementById(`${pageId}-page`);
+            if (targetPage) {
+                targetPage.classList.add('active');
+                currentPage = pageId;
+                // Scroll to top of the main content area when navigating
+                if (mainContent) {
+                    mainContent.scrollTo({ top: 0, behavior: 'smooth' });
+                }
+            }
+
+            // Close mobile menu if open
+            if (mobileMenu.classList.contains('translate-x-0')) {
+                mobileMenu.classList.remove('translate-x-0');
+                mobileMenu.classList.add('translate-x-full');
+            }
+        }
+
+        /**
+         * Toggles the visibility of the mobile menu.
+         */
+        function toggleMobileMenu() {
+            mobileMenu.classList.toggle('translate-x-full');
+            mobileMenu.classList.toggle('translate-x-0');
+        }
+
+        /**
+         * Smoothly scrolls the main content area to the top.
+         */
+        function scrollToTop() {
+            if (mainContent) {
+                mainContent.scrollTo({ top: 0, behavior: 'smooth' });
+            }
+        }
+
+        // --- Event Listeners ---
+
+        // Navigation buttons
+        navButtons.forEach(button => {
+            button.addEventListener('click', (event) => {
+                const page = event.currentTarget.dataset.page;
+                if (page) {
+                    navigateToPage(page);
+                }
+            });
+        });
+
+        // Mobile menu toggle
+        if (mobileMenuToggle) {
+            mobileMenuToggle.addEventListener('click', toggleMobileMenu);
+        }
+        if (mobileMenuClose) {
+            mobileMenuClose.addEventListener('click', toggleMobileMenu);
+        }
+
+        // Scroll to top button visibility
+        if (mainContent) {
+            mainContent.addEventListener('scroll', () => {
+                if (mainContent.scrollTop > 300) {
+                    scrollToTopBtn.classList.remove('hidden');
+                } else {
+                    scrollToTopBtn.classList.add('hidden');
+                }
+            });
+        }
+
+        // Scroll to top button click
+        if (scrollToTopBtn) {
+            scrollToTopBtn.addEventListener('click', scrollToTop);
+        }
+
+        // Custom Cursor Logic
+        document.addEventListener('mousemove', (e) => {
+            if (customCursor) {
+                customCursor.style.left = `${e.clientX}px`;
+                customCursor.style.top = `${e.clientY}px`;
+            }
+        });
+
+        // Add hover effect to interactive elements for custom cursor
+        document.querySelectorAll('button, a, .interactive-card').forEach(el => {
+            el.addEventListener('mouseenter', () => {
+                if (customCursor) customCursor.classList.add('hover-effect');
+            });
+            el.addEventListener('mouseleave', () => {
+                if (customCursor) customCursor.classList.remove('hover-effect');
+            });
+        });
+
+        // --- Three.js Hero Animation Logic ---
+        const heroCanvas = document.getElementById('hero-canvas');
+        if (heroCanvas) {
+            let scene, camera, renderer, particles, particleMaterial, particleCount = 1500; // Increased particle count for density
+            let mouseX = 0, mouseY = 0;
+            let windowHalfX = window.innerWidth / 2;
+            let windowHalfY = window.innerHeight / 2;
+
+            function initThreeJs() {
+                // Scene
+                scene = new THREE.Scene();
+
+                // Camera
+                camera = new THREE.PerspectiveCamera(75, heroCanvas.clientWidth / heroCanvas.clientHeight, 1, 10000);
+                camera.position.z = 1000;
+
+                // Renderer
+                renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+                renderer.setSize(heroCanvas.clientWidth, heroCanvas.clientHeight);
+                heroCanvas.appendChild(renderer.domElement);
+
+                // Particles
+                const geometry = new THREE.BufferGeometry();
+                const positions = [];
+                const colors = [];
+                // Use colors from the new gradient palette for particles
+                const color1 = new THREE.Color(getComputedStyle(document.documentElement).getPropertyValue('--primary-orange'));
+                const color2 = new THREE.Color(getComputedStyle(document.documentElement).getPropertyValue('--secondary-green'));
+                const gradientColors = [color1, color2];
+
+                for (let i = 0; i < particleCount; i++) {
+                    // Position particles randomly in a larger cube
+                    positions.push(Math.random() * 2000 - 1000); // x
+                    positions.push(Math.random() * 2000 - 1000); // y
+                    positions.push(Math.random() * 2000 - 1000); // z
+
+                    // Assign colors from the gradient palette
+                    const color = gradientColors[Math.floor(Math.random() * gradientColors.length)];
+                    colors.push(color.r, color.g, color.b);
+                }
+
+                geometry.setAttribute('position', new THREE.Float32BufferAttribute(positions, 3));
+                geometry.setAttribute('color', new THREE.Float32BufferAttribute(colors, 3));
+
+                particleMaterial = new THREE.PointsMaterial({
+                    size: 12, /* Slightly larger particles */
+                    vertexColors: true, // Use colors from geometry
+                    transparent: true,
+                    opacity: 0.7,
+                    blending: THREE.AdditiveBlending, // For glowing effect
+                    sizeAttenuation: true
+                });
+
+                particles = new THREE.Points(geometry, particleMaterial);
+                scene.add(particles);
+
+                // Mouse interaction for Three.js
+                document.addEventListener('mousemove', onDocumentMouseMove, false);
+                document.addEventListener('touchmove', onDocumentTouchMove, false);
+                window.addEventListener('resize', onWindowResize, false);
+
+                animateThreeJs();
+            }
+
+            function onDocumentMouseMove(event) {
+                mouseX = event.clientX - windowHalfX;
+                mouseY = event.clientY - windowHalfY;
+            }
+
+            function onDocumentTouchMove(event) {
+                if (event.touches.length === 1) {
+                    event.preventDefault();
+                    mouseX = event.touches[0].pageX - windowHalfX;
+                    mouseY = event.touches[0].pageY - windowHalfY;
+                }
+            }
+
+            function onWindowResize() {
+                windowHalfX = window.innerWidth / 2;
+                windowHalfY = window.innerHeight / 2;
+                camera.aspect = heroCanvas.clientWidth / heroCanvas.clientHeight;
+                camera.updateProjectionMatrix();
+                renderer.setSize(heroCanvas.clientWidth, heroCanvas.clientHeight);
+            }
+
+            function animateThreeJs() {
+                requestAnimationFrame(animateThreeJs);
+                renderThreeJs();
+            }
+
+            function renderThreeJs() {
+                // Camera movement based on mouse
+                camera.position.x += (mouseX * 0.6 - camera.position.x) * 0.04;
+                camera.position.y += (-mouseY * 0.6 - camera.position.y) * 0.04;
+                camera.lookAt(scene.position);
+
+                // Particle movement and interaction
+                const positions = particles.geometry.attributes.position.array;
+                for (let i = 0; i < particleCount; i++) {
+                    const i3 = i * 3;
+                    // Gentle floating motion and subtle depth movement
+                    positions[i3 + 1] += Math.sin(Date.now() * 0.00008 + i) * 0.4;
+                    positions[i3 + 0] += Math.cos(Date.now() * 0.00008 + i) * 0.4;
+                    positions[i3 + 2] += Math.sin(Date.now() * 0.00005 + i * 2) * 0.3; // Z-axis movement
+
+                    // Mouse repulsion effect
+                    const dx = positions[i3] - (camera.position.x + mouseX * 0.4);
+                    const dy = positions[i3 + 1] - (camera.position.y - mouseY * 0.4);
+                    const dist = Math.sqrt(dx * dx + dy * dy);
+
+                    if (dist < 180) { // Repulsion radius
+                        const force = (180 - dist) / 180;
+                        positions[i3] += dx * force * 0.08;
+                        positions[i3 + 1] += dy * force * 0.08;
+                    }
+
+                    // Keep particles within bounds (simple wrap-around)
+                    if (positions[i3] > 1000) positions[i3] = -1000;
+                    if (positions[i3] < -1000) positions[i3] = 1000;
+                    if (positions[i3 + 1] > 1000) positions[i3 + 1] = -1000;
+                    if (positions[i3 + 1] < -1000) positions[i3 + 1] = 1000;
+                    if (positions[i3 + 2] > 1000) positions[i3 + 2] = -1000;
+                    if (positions[i3 + 2] < -1000) positions[i3 + 2] = 1000;
+                }
+                particles.geometry.attributes.position.needsUpdate = true; // Important for updating positions
+
+                // Rotate the entire particle system slowly
+                particles.rotation.x += 0.0001;
+                particles.rotation.y += 0.0002;
+
+                renderer.render(scene, camera);
+            }
+
+            // Initialize Three.js when the window loads
+            window.addEventListener('load', initThreeJs);
+        }
+
+        // --- Initializations on DOMContentLoaded ---
+        document.addEventListener('DOMContentLoaded', () => {
+            // Set current year in footer
+            const currentYearSpan = document.getElementById('current-year');
+            if (currentYearSpan) {
+                currentYearSpan.textContent = new Date().getFullYear();
+            }
+
+            // Initial page load
+            navigateToPage('home'); // Ensure home page is active on load
+        });
+
+        // --- Intersection Observer for Scroll Animations (for page sections) ---
+        const pageSectionObserverOptions = {
+            root: null, // viewport
+            rootMargin: '0px',
+            threshold: 0.1 // Trigger when 10% of the element is visible
+        };
+
+        const pageSectionObserver = new IntersectionObserver((entries, observer) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('animate-fade-in');
+                    // Optionally unobserve if you only want the animation to play once
+                    // observer.unobserve(entry.target);
+                } else {
+                    // Optional: remove class if you want animation to replay on scroll back
+                    // entry.target.classList.remove('animate-fade-in');
+                }
+            });
+        }, pageSectionObserverOptions);
+
+        // Observe all page sections for scroll animation
+        document.querySelectorAll('.page-section').forEach(section => {
+            pageSectionObserver.observe(section);
+        });
+
+        // --- Intersection Observer for Card Animations (for interactive-card elements) ---
+        const cardObserverOptions = {
+            root: null, // viewport
+            rootMargin: '0px',
+            threshold: 0.2 // Trigger when 20% of the card is visible
+        };
+
+        const cardObserver = new IntersectionObserver((entries, observer) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('animate-fade-in'); // Use the same fade-in for cards
+                    // observer.unobserve(entry.target); // Uncomment if you want it to animate only once
+                } else {
+                    // entry.target.classList.remove('animate-fade-in'); // Uncomment if you want it to animate on scroll back
+                }
+            });
+        }, cardObserverOptions);
+
+        // Observe all interactive cards for scroll animation
+        document.querySelectorAll('.interactive-card').forEach(card => {
+            cardObserver.observe(card);
+        });
+
+        // --- Parallax Scroll Effect (simple version) ---
+        const parallaxElements = document.querySelectorAll('.parallax-bg');
+        if (mainContent) {
+            mainContent.addEventListener('scroll', () => {
+                const scrollTop = mainContent.scrollTop;
+                parallaxElements.forEach(el => {
+                    // Adjust the scroll speed for the background
+                    const speed = el.dataset.parallaxSpeed || 0.3; // Default speed
+                    el.style.backgroundPositionY = `calc(50% - ${scrollTop * speed}px)`;
+                });
+            });
+        }
+    </script>
+</body>
+</html>
