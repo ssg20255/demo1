@@ -1,0 +1,1880 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Second Step Group - Strategic Business Solutions</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Font Awesome for icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Font - Inter -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <!-- GSAP for advanced animations -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.11.4/gsap.min.js"></script>
+    <!-- Three.js for 3D effects -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <!-- Custom cursor library -->
+    <script src="https://unpkg.com/cursor-effects@latest/dist/browser.js"></script>
+
+    <style>
+        :root {
+            --primary-orange: #FF8C00;
+            --secondary-green: #7CFC00;
+            --dark-blue-bg: #000022;
+            --light-page-bg: #0A1F3B;
+            --card-bg: #1A3A5B;
+            --text-light: #E0F2F7;
+            --text-medium: #A0B0C0;
+            --input-text: #f0f0f0;
+            --accent-purple: #8A2BE2;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--dark-blue-bg);
+            color: var(--text-light);
+            overflow-x: hidden;
+            scroll-behavior: smooth;
+        }
+
+        /* Smooth scrolling for main content */
+        #main-content {
+            scroll-behavior: smooth;
+            scroll-padding-top: 20px;
+        }
+
+        /* Advanced gradient backgrounds */
+        .gradient-bg {
+            background: linear-gradient(135deg, var(--dark-blue-bg) 0%, var(--light-page-bg) 100%);
+        }
+
+        .gradient-text {
+            background: linear-gradient(90deg, var(--primary-orange), var(--secondary-green));
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+        }
+
+        /* 3D card effect */
+        .card-3d {
+            transform-style: preserve-3d;
+            transition: transform 0.5s ease, box-shadow 0.5s ease;
+            transform: perspective(1000px) rotateX(0) rotateY(0) translateZ(0);
+        }
+
+        .card-3d:hover {
+            transform: perspective(1000px) rotateX(5deg) rotateY(5deg) translateZ(20px);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+        }
+
+        /* Custom animations */
+        @keyframes float {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-20px); }
+        }
+
+        @keyframes pulse-glow {
+            0%, 100% { box-shadow: 0 0 10px rgba(255, 140, 0, 0.5); }
+            50% { box-shadow: 0 0 20px rgba(255, 140, 0, 0.8); }
+        }
+
+        @keyframes wave {
+            0% { transform: translateX(0) translateZ(0) scaleY(1); }
+            50% { transform: translateX(-25%) translateZ(0) scaleY(0.8); }
+            100% { transform: translateX(-50%) translateZ(0) scaleY(1); }
+        }
+
+        .animate-float {
+            animation: float 6s ease-in-out infinite;
+        }
+
+        .animate-pulse-glow {
+            animation: pulse-glow 2s ease-in-out infinite;
+        }
+
+        /* Wave divider */
+        .wave-divider {
+            position: relative;
+            height: 100px;
+            overflow: hidden;
+        }
+
+        .wave-divider svg {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            fill: var(--light-page-bg);
+            animation: wave 15s linear infinite;
+        }
+
+        /* Page transitions */
+        .page-section {
+            opacity: 0;
+            transform: translateY(30px);
+            transition: opacity 0.8s ease, transform 0.8s ease;
+        }
+
+        .page-section.active {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* Interactive elements */
+        .interactive-element {
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .interactive-element::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.1), transparent);
+            transition: all 0.6s ease;
+        }
+
+        .interactive-element:hover::before {
+            left: 100%;
+        }
+
+        /* Custom scrollbar */
+        #main-content::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        #main-content::-webkit-scrollbar-track {
+            background: var(--dark-blue-bg);
+        }
+
+        #main-content::-webkit-scrollbar-thumb {
+            background: var(--primary-orange);
+            border-radius: 4px;
+        }
+
+        /* Responsive adjustments */
+        @media (max-width: 768px) {
+            .card-3d:hover {
+                transform: none;
+            }
+        }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col gradient-bg">
+    <!-- Animated background elements -->
+    <div id="particles-js" class="fixed inset-0 z-0 opacity-20 pointer-events-none"></div>
+
+    <!-- Header Section -->
+    <header class="bg-dark-blue-bg/90 backdrop-blur-md text-text-light p-4 shadow-lg flex justify-between items-center sticky top-0 z-50">
+        <div class="flex items-center">
+            <img src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEgcYc-4tZgs406tAscwCZ2wFOR1yLPmSa0JmNS9owp1jDy8WLV_kVPKlg2TNbm9YMfdr6A4hwlgr3FG79SYkuK71X48Z55Bi0AlmbzQ-UZJj5gRJY0ZAZ27NCfse-0LCn8cxSImqsswv-Z9u6uUUDyJw4thx7tNVdNQrc4Fe9aQQWwm7Txds_ZTQQnqEs0/s452/image.png" 
+                 alt="Second Step Group Logo" 
+                 class="h-14 w-auto rounded-lg shadow-md transition-transform duration-300 hover:scale-105" />
+            <h1 class="text-3xl lg:text-4xl font-extrabold ml-4 tracking-tight gradient-text">Second Step Group</h1>
+        </div>
+        
+        <!-- Desktop Navigation -->
+        <nav class="hidden md:flex space-x-2 lg:space-x-6">
+            <button data-page="home" class="nav-btn px-4 py-2 text-lg font-semibold rounded-lg transition-all duration-300 hover:bg-primary-orange/20 hover:text-primary-orange border-b-2 border-transparent hover:border-primary-orange">
+                Home
+            </button>
+            <button data-page="about" class="nav-btn px-4 py-2 text-lg font-semibold rounded-lg transition-all duration-300 hover:bg-primary-orange/20 hover:text-primary-orange border-b-2 border-transparent hover:border-primary-orange">
+                About Us
+            </button>
+            <button data-page="services" class="nav-btn px-4 py-2 text-lg font-semibold rounded-lg transition-all duration-300 hover:bg-primary-orange/20 hover:text-primary-orange border-b-2 border-transparent hover:border-primary-orange">
+                Services
+            </button>
+            <button data-page="contact" class="nav-btn px-4 py-2 text-lg font-semibold rounded-lg transition-all duration-300 hover:bg-primary-orange/20 hover:text-primary-orange border-b-2 border-transparent hover:border-primary-orange">
+                Contact
+            </button>
+        </nav>
+        
+        <!-- Mobile Menu Button -->
+        <button id="mobile-menu-toggle" class="md:hidden text-primary-orange p-3 rounded-md hover:bg-primary-orange/20 transition duration-300 group">
+            <div class="w-8 h-8 relative">
+                <span class="block absolute h-0.5 w-full bg-current rounded-full transition-all duration-300 top-2 group-[.active]:rotate-45 group-[.active]:top-3"></span>
+                <span class="block absolute h-0.5 w-full bg-current rounded-full transition-all duration-300 top-3.5 group-[.active]:opacity-0"></span>
+                <span class="block absolute h-0.5 w-full bg-current rounded-full transition-all duration-300 top-5 group-[.active]:-rotate-45 group-[.active]:top-3"></span>
+            </div>
+        </button>
+    </header>
+
+    <!-- Mobile Navigation Sidebar -->
+    <div id="mobile-menu" class="fixed inset-y-0 right-0 w-64 bg-dark-blue-bg/95 backdrop-blur-lg text-text-light shadow-xl transform translate-x-full transition-transform duration-300 ease-in-out z-40 md:hidden">
+        <div class="p-4 flex justify-between items-center border-b border-primary-orange/30">
+            <h2 class="text-2xl font-bold gradient-text">Menu</h2>
+            <button id="mobile-menu-close" class="text-primary-orange p-2 rounded-md hover:bg-primary-orange/20 transition duration-300">
+                <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                </svg>
+            </button>
+        </div>
+        <nav class="flex flex-col p-4 space-y-4">
+            <button data-page="home" class="nav-btn flex items-center px-4 py-3 text-primary-orange hover:bg-primary-orange/20 rounded-lg transition duration-300 font-semibold text-lg">
+                <i class="fas fa-home mr-3"></i> Home
+            </button>
+            <button data-page="about" class="nav-btn flex items-center px-4 py-3 text-primary-orange hover:bg-primary-orange/20 rounded-lg transition duration-300 font-semibold text-lg">
+                <i class="fas fa-info-circle mr-3"></i> About Us
+            </button>
+            <button data-page="services" class="nav-btn flex items-center px-4 py-3 text-primary-orange hover:bg-primary-orange/20 rounded-lg transition duration-300 font-semibold text-lg">
+                <i class="fas fa-briefcase mr-3"></i> Services
+            </button>
+            <button data-page="contact" class="nav-btn flex items-center px-4 py-3 text-primary-orange hover:bg-primary-orange/20 rounded-lg transition duration-300 font-semibold text-lg">
+                <i class="fas fa-envelope mr-3"></i> Contact
+            </button>
+        </nav>
+    </div>
+
+    <!-- Main Content Area -->
+    <main id="main-content" class="flex-grow container mx-auto p-4 md:p-6 lg:p-8 mt-4 overflow-y-auto relative z-10">
+        <!-- Home Page Section -->
+        <section id="home-page" class="page-section active">
+            <!-- Hero Section with 3D Animation -->
+            <div class="relative bg-gradient-to-br from-dark-blue-bg to-light-page-bg text-text-light py-24 px-6 md:px-10 rounded-xl shadow-2xl overflow-hidden mb-12">
+                <div id="hero-animation" class="absolute inset-0 z-0"></div>
+                <div class="relative z-10 max-w-5xl mx-auto text-center">
+                    <h2 class="text-4xl sm:text-5xl lg:text-6xl font-extrabold mb-6 leading-tight drop-shadow-lg">
+                        Empowering Your <span class="gradient-text">Next Big Leap</span>
+                    </h2>
+                    <p class="text-text-light text-lg sm:text-xl leading-relaxed mb-8 drop-shadow-md max-w-3xl mx-auto">
+                        At Second Step Group, we provide strategic insights and innovative solutions to propel your business forward. We are your trusted partner in navigating complex challenges and unlocking new opportunities for growth.
+                    </p>
+                    <div class="flex flex-col sm:flex-row justify-center gap-4">
+                        <button data-page="services" class="nav-btn bg-primary-orange hover:bg-secondary-green text-dark-blue-bg px-8 py-4 rounded-full text-lg font-bold shadow-lg transition-all duration-300 hover:shadow-xl hover:scale-105 flex items-center justify-center mx-auto group">
+                            Explore Our Solutions <i class="fas fa-chevron-right ml-3 transition-transform duration-300 group-hover:translate-x-1"></i>
+                        </button>
+                        <button data-page="contact" class="nav-btn border-2 border-primary-orange text-primary-orange hover:bg-primary-orange/10 px-8 py-4 rounded-full text-lg font-bold shadow-lg transition-all duration-300 hover:shadow-xl hover:scale-105 flex items-center justify-center mx-auto group">
+                            Get Started <i class="fas fa-phone-alt ml-3 transition-transform duration-300 group-hover:translate-x-1"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Feature Showcase Section -->
+            <div class="p-6 md:p-10 bg-light-page-bg/50 backdrop-blur-sm rounded-xl shadow-xl mb-12 border border-primary-orange/20">
+                <h2 class="text-3xl md:text-4xl font-extrabold text-primary-orange mb-8 text-center pb-3 relative">
+                    <span class="relative inline-block">
+                        What We Offer
+                        <span class="absolute bottom-0 left-0 w-full h-1 bg-gradient-to-r from-primary-orange to-secondary-green rounded-full"></span>
+                    </span>
+                </h2>
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                    <!-- Feature Card 1 -->
+                    <div class="card-3d p-6 rounded-xl shadow-lg bg-gradient-to-br from-primary-orange/90 to-primary-orange hover:from-primary-orange hover:to-primary-orange/70 transition-all duration-500">
+                        <div class="text-5xl mb-4 text-dark-blue-bg animate-float">
+                            <i class="fas fa-lightbulb"></i>
+                        </div>
+                        <h3 class="text-2xl font-bold text-dark-blue-bg mb-3">Innovative Strategies</h3>
+                        <p class="text-dark-blue-bg">Develop cutting-edge strategies that adapt to market shifts and ensure long-term success with our expert guidance.</p>
+                    </div>
+                    
+                    <!-- Feature Card 2 -->
+                    <div class="card-3d p-6 rounded-xl shadow-lg bg-gradient-to-br from-secondary-green/90 to-secondary-green hover:from-secondary-green hover:to-secondary-green/70 transition-all duration-500">
+                        <div class="text-5xl mb-4 text-dark-blue-bg animate-float" style="animation-delay: 0.2s;">
+                            <i class="fas fa-rocket"></i>
+                        </div>
+                        <h3 class="text-2xl font-bold text-dark-blue-bg mb-3">Accelerated Growth</h3>
+                        <p class="text-dark-blue-bg">Implement solutions designed to scale your operations and significantly boost your revenue with measurable results.</p>
+                    </div>
+                    
+                    <!-- Feature Card 3 -->
+                    <div class="card-3d p-6 rounded-xl shadow-lg bg-gradient-to-br from-primary-orange/90 to-primary-orange hover:from-primary-orange hover:to-primary-orange/70 transition-all duration-500">
+                        <div class="text-5xl mb-4 text-dark-blue-bg animate-float" style="animation-delay: 0.4s;">
+                            <i class="fas fa-handshake"></i>
+                        </div>
+                        <h3 class="text-2xl font-bold text-dark-blue-bg mb-3">Trusted Partnership</h3>
+                        <p class="text-dark-blue-bg">Build lasting relationships based on trust, transparency, and mutual success with our dedicated team.</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Stats Section -->
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-12">
+                <div class="bg-card-bg/50 backdrop-blur-sm p-6 rounded-xl text-center border border-primary-orange/20 hover:border-primary-orange/50 transition-all duration-300">
+                    <div class="text-4xl font-bold text-primary-orange mb-2" data-counter="15">0</div>
+                    <div class="text-text-medium">Years Experience</div>
+                </div>
+                <div class="bg-card-bg/50 backdrop-blur-sm p-6 rounded-xl text-center border border-primary-orange/20 hover:border-primary-orange/50 transition-all duration-300">
+                    <div class="text-4xl font-bold text-primary-orange mb-2" data-counter="200">0+</div>
+                    <div class="text-text-medium">Clients Worldwide</div>
+                </div>
+                <div class="bg-card-bg/50 backdrop-blur-sm p-6 rounded-xl text-center border border-primary-orange/20 hover:border-primary-orange/50 transition-all duration-300">
+                    <div class="text-4xl font-bold text-primary-orange mb-2" data-counter="50">0+</div>
+                    <div class="text-text-medium">Industry Experts</div>
+                </div>
+                <div class="bg-card-bg/50 backdrop-blur-sm p-6 rounded-xl text-center border border-primary-orange/20 hover:border-primary-orange/50 transition-all duration-300">
+                    <div class="text-4xl font-bold text-primary-orange mb-2" data-counter="99">0%</div>
+                    <div class="text-text-medium">Client Satisfaction</div>
+                </div>
+            </div>
+
+            <!-- Testimonials Section -->
+            <div class="p-6 md:p-10 bg-light-page-bg/50 backdrop-blur-sm rounded-xl shadow-xl mb-12">
+                <h2 class="text-3xl md:text-4xl font-extrabold text-primary-orange mb-8 text-center pb-3 relative">
+                    <span class="relative inline-block">
+                        Client Success Stories
+                        <span class="absolute bottom-0 left-0 w-full h-1 bg-gradient-to-r from-primary-orange to-secondary-green rounded-full"></span>
+                    </span>
+                </h2>
+                
+                <div class="testimonial-slider relative overflow-hidden">
+                    <div class="testimonial-track flex transition-transform duration-500 ease-in-out">
+                        <!-- Testimonial 1 -->
+                        <div class="testimonial-slide min-w-full p-6">
+                            <div class="bg-card-bg/70 backdrop-blur-sm p-8 rounded-xl shadow-lg border-l-4 border-primary-orange">
+                                <div class="flex items-center mb-4">
+                                    <img src="https://randomuser.me/api/portraits/men/32.jpg" alt="Client" class="w-12 h-12 rounded-full mr-4 object-cover">
+                                    <div>
+                                        <h4 class="font-bold text-lg">Michael Johnson</h4>
+                                        <p class="text-text-medium text-sm">CEO, TechSolutions Inc.</p>
+                                    </div>
+                                </div>
+                                <p class="text-text-light italic">"Second Step Group transformed our business operations with their innovative strategies. Their team delivered exceptional results that exceeded our expectations and helped us achieve 300% growth in just two years."</p>
+                                <div class="flex mt-4 text-yellow-400">
+                                    <i class="fas fa-star"></i>
+                                    <i class="fas fa-star"></i>
+                                    <i class="fas fa-star"></i>
+                                    <i class="fas fa-star"></i>
+                                    <i class="fas fa-star"></i>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Testimonial 2 -->
+                        <div class="testimonial-slide min-w-full p-6">
+                            <div class="bg-card-bg/70 backdrop-blur-sm p-8 rounded-xl shadow-lg border-l-4 border-primary-orange">
+                                <div class="flex items-center mb-4">
+                                    <img src="https://randomuser.me/api/portraits/women/44.jpg" alt="Client" class="w-12 h-12 rounded-full mr-4 object-cover">
+                                    <div>
+                                        <h4 class="font-bold text-lg">Sarah Williams</h4>
+                                        <p class="text-text-medium text-sm">Director, Global Logistics</p>
+                                    </div>
+                                </div>
+                                <p class="text-text-light italic">"The supply chain optimization solutions provided by Second Step Group saved us millions annually. Their expertise and attention to detail are unmatched in the industry."</p>
+                                <div class="flex mt-4 text-yellow-400">
+                                    <i class="fas fa-star"></i>
+                                    <i class="fas fa-star"></i>
+                                    <i class="fas fa-star"></i>
+                                    <i class="fas fa-star"></i>
+                                    <i class="fas fa-star-half-alt"></i>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Testimonial 3 -->
+                        <div class="testimonial-slide min-w-full p-6">
+                            <div class="bg-card-bg/70 backdrop-blur-sm p-8 rounded-xl shadow-lg border-l-4 border-primary-orange">
+                                <div class="flex items-center mb-4">
+                                    <img src="https://randomuser.me/api/portraits/men/75.jpg" alt="Client" class="w-12 h-12 rounded-full mr-4 object-cover">
+                                    <div>
+                                        <h4 class="font-bold text-lg">David Chen</h4>
+                                        <p class="text-text-medium text-sm">CTO, HealthTech Innovations</p>
+                                    </div>
+                                </div>
+                                <p class="text-text-light italic">"Their R&D team helped us bring a groundbreaking healthcare product to market 6 months ahead of schedule. Second Step Group is now our go-to partner for all strategic initiatives."</p>
+                                <div class="flex mt-4 text-yellow-400">
+                                    <i class="fas fa-star"></i>
+                                    <i class="fas fa-star"></i>
+                                    <i class="fas fa-star"></i>
+                                    <i class="fas fa-star"></i>
+                                    <i class="fas fa-star"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="flex justify-center mt-6 space-x-2">
+                        <button class="testimonial-prev bg-primary-orange/20 hover:bg-primary-orange/40 text-primary-orange p-2 rounded-full transition duration-300">
+                            <i class="fas fa-chevron-left"></i>
+                        </button>
+                        <button class="testimonial-next bg-primary-orange/20 hover:bg-primary-orange/40 text-primary-orange p-2 rounded-full transition duration-300">
+                            <i class="fas fa-chevron-right"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Call to Action Section -->
+            <div class="relative bg-gradient-to-r from-primary-orange to-secondary-green text-dark-blue-bg py-16 px-6 md:px-10 rounded-xl shadow-2xl overflow-hidden mb-12 flex flex-col md:flex-row items-center justify-between">
+                <div class="absolute inset-0 z-0 opacity-10">
+                    <div class="absolute inset-0 bg-[url('https://grainy-gradients.vercel.app/noise.svg')] opacity-20"></div>
+                </div>
+                <div class="relative z-10 text-center md:text-left md:w-2/3 mb-6 md:mb-0">
+                    <h2 class="text-3xl md:text-4xl font-extrabold mb-4 leading-tight">Ready to Take Your <span class="text-dark-blue-bg">Second Step?</span></h2>
+                    <p class="text-dark-blue-bg text-lg">
+                        Let's discuss how our expertise can drive your next big success. Contact us today for a personalized consultation.
+                    </p>
+                </div>
+                <div class="relative z-10 md:w-1/3 flex justify-center md:justify-end">
+                    <button data-page="contact" class="nav-btn bg-dark-blue-bg hover:bg-light-page-bg text-primary-orange px-8 py-4 rounded-full text-lg font-bold shadow-lg transition-all duration-300 hover:shadow-xl hover:scale-105 group">
+                        Get Started <i class="fas fa-arrow-right ml-2 transition-transform duration-300 group-hover:translate-x-1"></i>
+                    </button>
+                </div>
+            </div>
+        </section>
+
+        <!-- About Us Page Section -->
+        <section id="about-page" class="page-section">
+            <div class="flex flex-col md:flex-row items-start gap-8 mb-12">
+                <div class="md:w-2/3">
+                    <h2 class="text-4xl font-extrabold text-primary-orange mb-6 pb-2 relative">
+                        <span class="relative inline-block">
+                            About Second Step Group
+                            <span class="absolute bottom-0 left-0 w-full h-1 bg-gradient-to-r from-primary-orange to-secondary-green rounded-full"></span>
+                        </span>
+                    </h2>
+                    <p class="text-text-medium text-lg leading-relaxed mb-6">
+                        Founded on the principles of innovation, integrity, and client-centricity, Second Step Group has grown into a trusted partner for businesses seeking sustainable growth and operational excellence. Our team comprises seasoned experts from diverse fields, united by a shared passion for delivering exceptional results.
+                    </p>
+                </div>
+                <div class="md:w-1/3 bg-card-bg/50 backdrop-blur-sm p-6 rounded-xl shadow-lg border border-primary-orange/20 hover:border-primary-orange/50 transition-all duration-300">
+                    <div class="text-5xl text-primary-orange mb-4 text-center">
+                        <i class="fas fa-history"></i>
+                    </div>
+                    <h3 class="text-2xl font-bold text-primary-orange mb-3 text-center">Our Journey</h3>
+                    <p class="text-text-light text-center">From humble beginnings to global recognition, our story is one of relentless pursuit of excellence.</p>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8 mb-8">
+                <!-- Mission Card -->
+                <div class="card-3d p-6 rounded-xl shadow-lg bg-gradient-to-br from-primary-orange/90 to-primary-orange hover:from-primary-orange hover:to-primary-orange/70 transition-all duration-500">
+                    <div class="text-5xl mb-4 text-dark-blue-bg text-center">
+                        <i class="fas fa-bullseye"></i>
+                    </div>
+                    <h3 class="text-3xl font-bold text-dark-blue-bg mb-4 text-center">Our Mission</h3>
+                    <p class="text-dark-blue-bg leading-relaxed text-center">
+                        To empower our clients with the knowledge, tools, and strategies necessary to overcome challenges and seize opportunities, ensuring their continued success in an ever-evolving global market. We are committed to fostering long-term partnerships built on trust and mutual growth.
+                    </p>
+                </div>
+                
+                <!-- Vision Card -->
+                <div class="card-3d p-6 rounded-xl shadow-lg bg-gradient-to-br from-secondary-green/90 to-secondary-green hover:from-secondary-green hover:to-secondary-green/70 transition-all duration-500">
+                    <div class="text-5xl mb-4 text-dark-blue-bg text-center">
+                        <i class="fas fa-eye"></i>
+                    </div>
+                    <h3 class="text-3xl font-bold text-dark-blue-bg mb-4 text-center">Our Vision</h3>
+                    <p class="text-dark-blue-bg leading-relaxed text-center">
+                        To be the leading strategic partner recognized for transforming businesses and fostering a culture of continuous improvement and innovation. We aspire to set new benchmarks in consulting and solution delivery.
+                    </p>
+                </div>
+            </div>
+
+            <!-- Values Section -->
+            <div class="mb-12">
+                <h3 class="text-3xl font-bold text-primary-orange mb-6 text-center pb-2 relative">
+                    <span class="relative inline-block">
+                        Our Core Values
+                        <span class="absolute bottom-0 left-0 w-full h-1 bg-gradient-to-r from-primary-orange to-secondary-green rounded-full"></span>
+                    </span>
+                </h3>
+                
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+                    <!-- Value 1 -->
+                    <div class="interactive-element bg-card-bg/50 backdrop-blur-sm p-5 rounded-lg shadow-sm border border-primary-orange/20 hover:border-primary-orange/50 transition-all duration-300 flex items-start space-x-4">
+                        <div class="flex-shrink-0 text-3xl text-primary-orange">
+                            <i class="fas fa-trophy"></i>
+                        </div>
+                        <div>
+                            <h4 class="text-xl font-bold text-primary-orange mb-1">Client Success</h4>
+                            <p class="text-text-light">Your growth is our priority, driving every decision and action we take to ensure your business thrives.</p>
+                        </div>
+                    </div>
+                    
+                    <!-- Value 2 -->
+                    <div class="interactive-element bg-card-bg/50 backdrop-blur-sm p-5 rounded-lg shadow-sm border border-primary-orange/20 hover:border-primary-orange/50 transition-all duration-300 flex items-start space-x-4">
+                        <div class="flex-shrink-0 text-3xl text-primary-orange">
+                            <i class="fas fa-lightbulb"></i>
+                        </div>
+                        <div>
+                            <h4 class="text-xl font-bold text-primary-orange mb-1">Innovation</h4>
+                            <p class="text-text-light">Constantly seeking new and better ways to solve complex problems and create value for our clients.</p>
+                        </div>
+                    </div>
+                    
+                    <!-- Value 3 -->
+                    <div class="interactive-element bg-card-bg/50 backdrop-blur-sm p-5 rounded-lg shadow-sm border border-primary-orange/20 hover:border-primary-orange/50 transition-all duration-300 flex items-start space-x-4">
+                        <div class="flex-shrink-0 text-3xl text-primary-orange">
+                            <i class="fas fa-shield-alt"></i>
+                        </div>
+                        <div>
+                            <h4 class="text-xl font-bold text-primary-orange mb-1">Integrity</h4>
+                            <p class="text-text-light">Upholding the highest ethical standards in all our interactions, fostering trust and transparency.</p>
+                        </div>
+                    </div>
+                    
+                    <!-- Value 4 -->
+                    <div class="interactive-element bg-card-bg/50 backdrop-blur-sm p-5 rounded-lg shadow-sm border border-primary-orange/20 hover:border-primary-orange/50 transition-all duration-300 flex items-start space-x-4">
+                        <div class="flex-shrink-0 text-3xl text-primary-orange">
+                            <i class="fas fa-star"></i>
+                        </div>
+                        <div>
+                            <h4 class="text-xl font-bold text-primary-orange mb-1">Excellence</h4>
+                            <p class="text-text-light">Delivering superior quality, measurable results, and consistently exceeding client expectations.</p>
+                        </div>
+                    </div>
+                    
+                    <!-- Value 5 -->
+                    <div class="interactive-element bg-card-bg/50 backdrop-blur-sm p-5 rounded-lg shadow-sm border border-primary-orange/20 hover:border-primary-orange/50 transition-all duration-300 flex items-start space-x-4">
+                        <div class="flex-shrink-0 text-3xl text-primary-orange">
+                            <i class="fas fa-users"></i>
+                        </div>
+                        <div>
+                            <h4 class="text-xl font-bold text-primary-orange mb-1">Collaboration</h4>
+                            <p class="text-text-light">Working together with clients as true partners, leveraging collective strengths for mutual success.</p>
+                        </div>
+                    </div>
+                    
+                    <!-- Value 6 -->
+                    <div class="interactive-element bg-card-bg/50 backdrop-blur-sm p-5 rounded-lg shadow-sm border border-primary-orange/20 hover:border-primary-orange/50 transition-all duration-300 flex items-start space-x-4">
+                        <div class="flex-shrink-0 text-3xl text-primary-orange">
+                            <i class="fas fa-sync-alt"></i>
+                        </div>
+                        <div>
+                            <h4 class="text-xl font-bold text-primary-orange mb-1">Adaptability</h4>
+                            <p class="text-text-light">Embracing change and evolving our strategies to meet dynamic market needs and client requirements.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Team Section -->
+            <div class="mb-12">
+                <h3 class="text-3xl font-bold text-primary-orange mb-6 text-center pb-2 relative">
+                    <span class="relative inline-block">
+                        Meet Our Leadership
+                        <span class="absolute bottom-0 left-0 w-full h-1 bg-gradient-to-r from-primary-orange to-secondary-green rounded-full"></span>
+                    </span>
+                </h3>
+                
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+                    <!-- Team Member 1 -->
+                    <div class="card-3d bg-card-bg/50 backdrop-blur-sm rounded-xl shadow-lg overflow-hidden border border-primary-orange/20 hover:border-primary-orange/50 transition-all duration-300">
+                        <div class="h-48 bg-gradient-to-br from-primary-orange to-secondary-green flex items-center justify-center">
+                            <img src="https://randomuser.me/api/portraits/men/42.jpg" alt="Team Member" class="w-32 h-32 rounded-full border-4 border-white/80 object-cover shadow-md">
+                        </div>
+                        <div class="p-6 text-center">
+                            <h4 class="text-xl font-bold text-primary-orange mb-1">John Peterson</h4>
+                            <p class="text-text-medium text-sm mb-3">Founder & CEO</p>
+                            <p class="text-text-light text-sm">Visionary leader with 20+ years in strategic business development.</p>
+                            <div class="flex justify-center space-x-2 mt-4">
+                                <a href="#" class="text-primary-orange hover:text-secondary-green transition duration-300">
+                                    <i class="fab fa-linkedin-in"></i>
+                                </a>
+                                <a href="#" class="text-primary-orange hover:text-secondary-green transition duration-300">
+                                    <i class="fas fa-envelope"></i>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Team Member 2 -->
+                    <div class="card-3d bg-card-bg/50 backdrop-blur-sm rounded-xl shadow-lg overflow-hidden border border-primary-orange/20 hover:border-primary-orange/50 transition-all duration-300">
+                        <div class="h-48 bg-gradient-to-br from-primary-orange to-secondary-green flex items-center justify-center">
+                            <img src="https://randomuser.me/api/portraits/women/63.jpg" alt="Team Member" class="w-32 h-32 rounded-full border-4 border-white/80 object-cover shadow-md">
+                        </div>
+                        <div class="p-6 text-center">
+                            <h4 class="text-xl font-bold text-primary-orange mb-1">Sarah Chen</h4>
+                            <p class="text-text-medium text-sm mb-3">Chief Operations Officer</p>
+                            <p class="text-text-light text-sm">Operations expert specializing in process optimization and efficiency.</p>
+                            <div class="flex justify-center space-x-2 mt-4">
+                                <a href="#" class="text-primary-orange hover:text-secondary-green transition duration-300">
+                                    <i class="fab fa-linkedin-in"></i>
+                                </a>
+                                <a href="#" class="text-primary-orange hover:text-secondary-green transition duration-300">
+                                    <i class="fas fa-envelope"></i>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Team Member 3 -->
+                    <div class="card-3d bg-card-bg/50 backdrop-blur-sm rounded-xl shadow-lg overflow-hidden border border-primary-orange/20 hover:border-primary-orange/50 transition-all duration-300">
+                        <div class="h-48 bg-gradient-to-br from-primary-orange to-secondary-green flex items-center justify-center">
+                            <img src="https://randomuser.me/api/portraits/men/75.jpg" alt="Team Member" class="w-32 h-32 rounded-full border-4 border-white/80 object-cover shadow-md">
+                        </div>
+                        <div class="p-6 text-center">
+                            <h4 class="text-xl font-bold text-primary-orange mb-1">Michael Rodriguez</h4>
+                            <p class="text-text-medium text-sm mb-3">Chief Technology Officer</p>
+                            <p class="text-text-light text-sm">Tech innovator driving digital transformation strategies.</p>
+                            <div class="flex justify-center space-x-2 mt-4">
+                                <a href="#" class="text-primary-orange hover:text-secondary-green transition duration-300">
+                                    <i class="fab fa-linkedin-in"></i>
+                                </a>
+                                <a href="#" class="text-primary-orange hover:text-secondary-green transition duration-300">
+                                    <i class="fas fa-envelope"></i>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Team Member 4 -->
+                    <div class="card-3d bg-card-bg/50 backdrop-blur-sm rounded-xl shadow-lg overflow-hidden border border-primary-orange/20 hover:border-primary-orange/50 transition-all duration-300">
+                        <div class="h-48 bg-gradient-to-br from-primary-orange to-secondary-green flex items-center justify-center">
+                            <img src="https://randomuser.me/api/portraits/women/32.jpg" alt="Team Member" class="w-32 h-32 rounded-full border-4 border-white/80 object-cover shadow-md">
+                        </div>
+                        <div class="p-6 text-center">
+                            <h4 class="text-xl font-bold text-primary-orange mb-1">Emily Johnson</h4>
+                            <p class="text-text-medium text-sm mb-3">Director of Client Success</p>
+                            <p class="text-text-light text-sm">Dedicated to ensuring exceptional client experiences and outcomes.</p>
+                            <div class="flex justify-center space-x-2 mt-4">
+                                <a href="#" class="text-primary-orange hover:text-secondary-green transition duration-300">
+                                    <i class="fab fa-linkedin-in"></i>
+                                </a>
+                                <a href="#" class="text-primary-orange hover:text-secondary-green transition duration-300">
+                                    <i class="fas fa-envelope"></i>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Timeline Section -->
+            <div class="mb-12">
+                <h3 class="text-3xl font-bold text-primary-orange mb-8 text-center pb-2 relative">
+                    <span class="relative inline-block">
+                        Our Journey
+                        <span class="absolute bottom-0 left-0 w-full h-1 bg-gradient-to-r from-primary-orange to-secondary-green rounded-full"></span>
+                    </span>
+                </h3>
+                
+                <div class="timeline relative max-w-4xl mx-auto">
+                    <!-- Timeline item 1 -->
+                    <div class="timeline-item mb-8">
+                        <div class="timeline-dot absolute left-1/2 -ml-2.5 w-5 h-5 rounded-full bg-primary-orange border-4 border-secondary-green z-10"></div>
+                        <div class="timeline-content bg-card-bg/50 backdrop-blur-sm p-6 rounded-xl shadow-lg border-l-4 border-primary-orange ml-8 md:ml-0 md:w-5/12 relative">
+                            <div class="absolute -left-2 top-6 w-0 h-0 border-t-8 border-b-8 border-r-8 border-t-transparent border-b-transparent border-r-card-bg/50 md:hidden"></div>
+                            <div class="timeline-date text-secondary-green font-bold mb-2">2008</div>
+                            <h4 class="text-xl font-bold text-primary-orange mb-2">Company Founded</h4>
+                            <p class="text-text-light">Second Step Group was established with a vision to redefine business consulting through innovative approaches.</p>
+                        </div>
+                    </div>
+                    
+                    <!-- Timeline item 2 -->
+                    <div class="timeline-item mb-8 flex-row-reverse">
+                        <div class="timeline-dot absolute left-1/2 -ml-2.5 w-5 h-5 rounded-full bg-primary-orange border-4 border-secondary-green z-10"></div>
+                        <div class="timeline-content bg-card-bg/50 backdrop-blur-sm p-6 rounded-xl shadow-lg border-r-4 border-primary-orange mr-8 md:mr-0 md:w-5/12 md:ml-auto relative">
+                            <div class="absolute -right-2 top-6 w-0 h-0 border-t-8 border-b-8 border-l-8 border-t-transparent border-b-transparent border-l-card-bg/50 md:hidden"></div>
+                            <div class="timeline-date text-secondary-green font-bold mb-2">2012</div>
+                            <h4 class="text-xl font-bold text-primary-orange mb-2">First International Client</h4>
+                            <p class="text-text-light">Expanded operations globally by securing our first international client partnership in Europe.</p>
+                        </div>
+                    </div>
+                    
+                    <!-- Timeline item 3 -->
+                    <div class="timeline-item mb-8">
+                        <div class="timeline-dot absolute left-1/2 -ml-2.5 w-5 h-5 rounded-full bg-primary-orange border-4 border-secondary-green z-10"></div>
+                        <div class="timeline-content bg-card-bg/50 backdrop-blur-sm p-6 rounded-xl shadow-lg border-l-4 border-primary-orange ml-8 md:ml-0 md:w-5/12 relative">
+                            <div class="absolute -left-2 top-6 w-0 h-0 border-t-8 border-b-8 border-r-8 border-t-transparent border-b-transparent border-r-card-bg/50 md:hidden"></div>
+                            <div class="timeline-date text-secondary-green font-bold mb-2">2016</div>
+                            <h4 class="text-xl font-bold text-primary-orange mb-2">Technology Division Launch</h4>
+                            <p class="text-text-light">Established our dedicated technology solutions division to meet growing digital transformation needs.</p>
+                        </div>
+                    </div>
+                    
+                    <!-- Timeline item 4 -->
+                    <div class="timeline-item mb-8 flex-row-reverse">
+                        <div class="timeline-dot absolute left-1/2 -ml-2.5 w-5 h-5 rounded-full bg-primary-orange border-4 border-secondary-green z-10"></div>
+                        <div class="timeline-content bg-card-bg/50 backdrop-blur-sm p-6 rounded-xl shadow-lg border-r-4 border-primary-orange mr-8 md:mr-0 md:w-5/12 md:ml-auto relative">
+                            <div class="absolute -right-2 top-6 w-0 h-0 border-t-8 border-b-8 border-l-8 border-t-transparent border-b-transparent border-l-card-bg/50 md:hidden"></div>
+                            <div class="timeline-date text-secondary-green font-bold mb-2">2020</div>
+                            <h4 class="text-xl font-bold text-primary-orange mb-2">Global Recognition</h4>
+                            <p class="text-text-light">Awarded "Top Consulting Firm" by International Business Magazine for innovative solutions.</p>
+                        </div>
+                    </div>
+                    
+                    <!-- Timeline item 5 -->
+                    <div class="timeline-item">
+                        <div class="timeline-dot absolute left-1/2 -ml-2.5 w-5 h-5 rounded-full bg-primary-orange border-4 border-secondary-green z-10"></div>
+                        <div class="timeline-content bg-card-bg/50 backdrop-blur-sm p-6 rounded-xl shadow-lg border-l-4 border-primary-orange ml-8 md:ml-0 md:w-5/12 relative">
+                            <div class="absolute -left-2 top-6 w-0 h-0 border-t-8 border-b-8 border-r-8 border-t-transparent border-b-transparent border-r-card-bg/50 md:hidden"></div>
+                            <div class="timeline-date text-secondary-green font-bold mb-2">2023</div>
+                            <h4 class="text-xl font-bold text-primary-orange mb-2">Expanded Service Portfolio</h4>
+                            <p class="text-text-light">Launched specialized healthcare and logistics consulting divisions to serve emerging market needs.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Services Page Section -->
+        <section id="services-page" class="page-section">
+            <h2 class="text-4xl font-extrabold text-primary-orange mb-6 pb-2 relative">
+                <span class="relative inline-block">
+                    Our Comprehensive Services
+                    <span class="absolute bottom-0 left-0 w-full h-1 bg-gradient-to-r from-primary-orange to-secondary-green rounded-full"></span>
+                </span>
+            </h2>
+            <p class="text-lg text-text-medium leading-relaxed mb-8">
+                Second Step Group offers a diverse range of services designed to address the multifaceted needs of modern businesses. We combine deep industry knowledge with innovative methodologies to deliver tangible results and drive sustainable growth. Explore our key service areas below.
+            </p>
+            
+            <!-- Services Tabs -->
+            <div class="mb-12">
+                <div class="flex flex-wrap border-b border-primary-orange/20 mb-6">
+                    <button class="service-tab-btn px-6 py-3 font-medium text-text-light border-b-2 border-transparent hover:border-primary-orange transition duration-300 active" data-tab="business-consulting">
+                        <i class="fas fa-briefcase mr-2"></i> Business Consulting
+                    </button>
+                    <button class="service-tab-btn px-6 py-3 font-medium text-text-light border-b-2 border-transparent hover:border-primary-orange transition duration-300" data-tab="tech-solutions">
+                        <i class="fas fa-laptop-code mr-2"></i> Tech Solutions
+                    </button>
+                    <button class="service-tab-btn px-6 py-3 font-medium text-text-light border-b-2 border-transparent hover:border-primary-orange transition duration-300" data-tab="logistics">
+                        <i class="fas fa-truck mr-2"></i> Logistics
+                    </button>
+                    <button class="service-tab-btn px-6 py-3 font-medium text-text-light border-b-2 border-transparent hover:border-primary-orange transition duration-300" data-tab="healthcare">
+                        <i class="fas fa-heartbeat mr-2"></i> Healthcare
+                    </button>
+                </div>
+                
+                <!-- Business Consulting Tab Content -->
+                <div id="business-consulting" class="service-tab-content active">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                        <div class="card-3d bg-card-bg/50 backdrop-blur-sm p-6 rounded-xl shadow-lg border border-primary-orange/20 hover:border-primary-orange/50 transition-all duration-300">
+                            <div class="text-4xl text-primary-orange mb-4">
+                                <i class="fas fa-chart-line"></i>
+                            </div>
+                            <h3 class="text-2xl font-bold text-primary-orange mb-3">Strategic Planning</h3>
+                            <p class="text-text-light mb-4">Comprehensive business strategy development to align your organization with market opportunities and long-term goals.</p>
+                            <ul class="text-text-light space-y-2">
+                                <li class="flex items-start">
+                                    <i class="fas fa-check text-secondary-green mr-2 mt-1"></i>
+                                    <span>Market analysis and positioning</span>
+                                </li>
+                                <li class="flex items-start">
+                                    <i class="fas fa-check text-secondary-green mr-2 mt-1"></i>
+                                    <span>Competitive strategy development</span>
+                                </li>
+                                <li class="flex items-start">
+                                    <i class="fas fa-check text-secondary-green mr-2 mt-1"></i>
+                                    <span>Growth roadmap creation</span>
+                                </li>
+                            </ul>
+                        </div>
+                        
+                        <div class="card-3d bg-card-bg/50 backdrop-blur-sm p-6 rounded-xl shadow-lg border border-primary-orange/20 hover:border-primary-orange/50 transition-all duration-300">
+                            <div class="text-4xl text-primary-orange mb-4">
+                                <i class="fas fa-sitemap"></i>
+                            </div>
+                            <h3 class="text-2xl font-bold text-primary-orange mb-3">Organizational Development</h3>
+                            <p class="text-text-light mb-4">Transform your organizational structure and culture to enhance productivity and employee engagement.</p>
+                            <ul class="text-text-light space-y-2">
+                                <li class="flex items-start">
+                                    <i class="fas fa-check text-secondary-green mr-2 mt-1"></i>
+                                    <span>Leadership development programs</span>
+                                </li>
+                                <li class="flex items-start">
+                                    <i class="fas fa-check text-secondary-green mr-2 mt-1"></i>
+                                    <span>Change management strategies</span>
+                                </li>
+                                <li class="flex items-start">
+                                    <i class="fas fa-check text-secondary-green mr-2 mt-1"></i>
+                                    <span>Performance optimization</span>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Tech Solutions Tab Content -->
+                <div id="tech-solutions" class="service-tab-content hidden">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                        <div class="card-3d bg-card-bg/50 backdrop-blur-sm p-6 rounded-xl shadow-lg border border-primary-orange/20 hover:border-primary-orange/50 transition-all duration-300">
+                            <div class="text-4xl text-primary-orange mb-4">
+                                <i class="fas fa-cloud"></i>
+                            </div>
+                            <h3 class="text-2xl font-bold text-primary-orange mb-3">Cloud Solutions</h3>
+                            <p class="text-text-light mb-4">Modernize your infrastructure with secure, scalable cloud solutions tailored to your business needs.</p>
+                            <ul class="text-text-light space-y-2">
+                                <li class="flex items-start">
+                                    <i class="fas fa-check text-secondary-green mr-2 mt-1"></i>
+                                    <span>Cloud migration strategy</span>
+                                </li>
+                                <li class="flex items-start">
+                                    <i class="fas fa-check text-secondary-green mr-2 mt-1"></i>
+                                    <span>Hybrid cloud architecture</span>
+                                </li>
+                                <li class="flex items-start">
+                                    <i class="fas fa-check text-secondary-green mr-2 mt-1"></i>
+                                    <span>Cost optimization</span>
+                                </li>
+                            </ul>
+                        </div>
+                        
+                        <div class="card-3d bg-card-bg/50 backdrop-blur-sm p-6 rounded-xl shadow-lg border border-primary-orange/20 hover:border-primary-orange/50 transition-all duration-300">
+                            <div class="text-4xl text-primary-orange mb-4">
+                                <i class="fas fa-shield-alt"></i>
+                            </div>
+                            <h3 class="text-2xl font-bold text-primary-orange mb-3">Cybersecurity</h3>
+                            <p class="text-text-light mb-4">Protect your digital assets with comprehensive cybersecurity solutions and risk management.</p>
+                            <ul class="text-text-light space-y-2">
+                                <li class="flex items-start">
+                                    <i class="fas fa-check text-secondary-green mr-2 mt-1"></i>
+                                    <span>Threat assessment</span>
+                                </li>
+                                <li class="flex items-start">
+                                    <i class="fas fa-check text-secondary-green mr-2 mt-1"></i>
+                                    <span>Security architecture</span>
+                                </li>
+                                <li class="flex items-start">
+                                    <i class="fas fa-check text-secondary-green mr-2 mt-1"></i>
+                                    <span>Compliance management</span>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Logistics Tab Content -->
+                <div id="logistics" class="service-tab-content hidden">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                        <div class="card-3d bg-card-bg/50 backdrop-blur-sm p-6 rounded-xl shadow-lg border border-primary-orange/20 hover:border-primary-orange/50 transition-all duration-300">
+                            <div class="text-4xl text-primary-orange mb-4">
+                                <i class="fas fa-warehouse"></i>
+                            </div>
+                            <h3 class="text-2xl font-bold text-primary-orange mb-3">Supply Chain Optimization</h3>
+                            <p class="text-text-light mb-4">Streamline your supply chain with data-driven strategies to reduce costs and improve efficiency.</p>
+                            <ul class="text-text-light space-y-2">
+                                <li class="flex items-start">
+                                    <i class="fas fa-check text-secondary-green mr-2 mt-1"></i>
+                                    <span>Inventory management</span>
+                                </li>
+                                <li class="flex items-start">
+                                    <i class="fas fa-check text-secondary-green mr-2 mt-1"></i>
+                                    <span>Vendor management</span>
+                                </li>
+                                <li class="flex items-start">
+                                    <i class="fas fa-check text-secondary-green mr-2 mt-1"></i>
+                                    <span>Logistics network design</span>
+                                </li>
+                            </ul>
+                        </div>
+                        
+                        <div class="card-3d bg-card-bg/50 backdrop-blur-sm p-6 rounded-xl shadow-lg border border-primary-orange/20 hover:border-primary-orange/50 transition-all duration-300">
+                            <div class="text-4xl text-primary-orange mb-4">
+                                <i class="fas fa-globe"></i>
+                            </div>
+                            <h3 class="text-2xl font-bold text-primary-orange mb-3">Global Logistics</h3>
+                            <p class="text-text-light mb-4">Navigate international trade complexities with our global logistics expertise.</p>
+                            <ul class="text-text-light space-y-2">
+                                <li class="flex items-start">
+                                    <i class="fas fa-check text-secondary-green mr-2 mt-1"></i>
+                                    <span>Customs compliance</span>
+                                </li>
+                                <li class="flex items-start">
+                                    <i class="fas fa-check text-secondary-green mr-2 mt-1"></i>
+                                    <span>Transportation management</span>
+                                </li>
+                                <li class="flex items-start">
+                                    <i class="fas fa-check text-secondary-green mr-2 mt-1"></i>
+                                    <span>Trade regulation advisory</span>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Healthcare Tab Content -->
+                <div id="healthcare" class="service-tab-content hidden">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                        <div class="card-3d bg-card-bg/50 backdrop-blur-sm p-6 rounded-xl shadow-lg border border-primary-orange/20 hover:border-primary-orange/50 transition-all duration-300">
+                            <div class="text-4xl text-primary-orange mb-4">
+                                <i class="fas fa-hospital"></i>
+                            </div>
+                            <h3 class="text-2xl font-bold text-primary-orange mb-3">Healthcare IT</h3>
+                            <p class="text-text-light mb-4">Transform healthcare delivery with cutting-edge technology solutions.</p>
+                            <ul class="text-text-light space-y-2">
+                                <li class="flex items-start">
+                                    <i class="fas fa-check text-secondary-green mr-2 mt-1"></i>
+                                    <span>EHR/EMR implementation</span>
+                                </li>
+                                <li class="flex items-start">
+                                    <i class="fas fa-check text-secondary-green mr-2 mt-1"></i>
+                                    <span>Telehealth solutions</span>
+                                </li>
+                                <li class="flex items-start">
+                                    <i class="fas fa-check text-secondary-green mr-2 mt-1"></i>
+                                    <span>Data interoperability</span>
+                                </li>
+                            </ul>
+                        </div>
+                        
+                        <div class="card-3d bg-card-bg/50 backdrop-blur-sm p-6 rounded-xl shadow-lg border border-primary-orange/20 hover:border-primary-orange/50 transition-all duration-300">
+                            <div class="text-4xl text-primary-orange mb-4">
+                                <i class="fas fa-clipboard-check"></i>
+                            </div>
+                            <h3 class="text-2xl font-bold text-primary-orange mb-3">Regulatory Compliance</h3>
+                            <p class="text-text-light mb-4">Navigate complex healthcare regulations with confidence.</p>
+                            <ul class="text-text-light space-y-2">
+                                <li class="flex items-start">
+                                    <i class="fas fa-check text-secondary-green mr-2 mt-1"></i>
+                                    <span>HIPAA compliance</span>
+                                </li>
+                                <li class="flex items-start">
+                                    <i class="fas fa-check text-secondary-green mr-2 mt-1"></i>
+                                    <span>Quality reporting</span>
+                                </li>
+                                <li class="flex items-start">
+                                    <i class="fas fa-check text-secondary-green mr-2 mt-1"></i>
+                                    <span>Risk management</span>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- All Services Grid -->
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mb-8">
+                <div class="card-3d bg-card-bg/50 backdrop-blur-sm p-6 rounded-xl shadow-lg border border-primary-orange/20 hover:border-primary-orange/50 transition-all duration-300">
+                    <div class="text-4xl text-primary-orange mb-4">
+                        <i class="fas fa-bullseye"></i>
+                    </div>
+                    <h3 class="text-2xl font-bold text-primary-orange mb-3">Market Research</h3>
+                    <p class="text-text-light">In-depth market analysis to identify opportunities, trends, and competitive landscapes.</p>
+                    <button class="mt-4 text-secondary-green hover:underline flex items-center group">
+                        Learn more <i class="fas fa-arrow-right ml-2 transition-transform duration-300 group-hover:translate-x-1"></i>
+                    </button>
+                </div>
+                
+                <div class="card-3d bg-card-bg/50 backdrop-blur-sm p-6 rounded-xl shadow-lg border border-primary-orange/20 hover:border-primary-orange/50 transition-all duration-300">
+                    <div class="text-4xl text-primary-orange mb-4">
+                        <i class="fas fa-flask"></i>
+                    </div>
+                    <h3 class="text-2xl font-bold text-primary-orange mb-3">R&D Consulting</h3>
+                    <p class="text-text-light">Innovation strategies and research methodologies to accelerate product development.</p>
+                    <button class="mt-4 text-secondary-green hover:underline flex items-center group">
+                        Learn more <i class="fas fa-arrow-right ml-2 transition-transform duration-300 group-hover:translate-x-1"></i>
+                    </button>
+                </div>
+                
+                <div class="card-3d bg-card-bg/50 backdrop-blur-sm p-6 rounded-xl shadow-lg border border-primary-orange/20 hover:border-primary-orange/50 transition-all duration-300">
+                    <div class="text-4xl text-primary-orange mb-4">
+                        <i class="fas fa-chart-pie"></i>
+                    </div>
+                    <h3 class="text-2xl font-bold text-primary-orange mb-3">Data Analytics</h3>
+                    <p class="text-text-light">Transform raw data into actionable insights for informed decision-making.</p>
+                    <button class="mt-4 text-secondary-green hover:underline flex items-center group">
+                        Learn more <i class="fas fa-arrow-right ml-2 transition-transform duration-300 group-hover:translate-x-1"></i>
+                    </button>
+                </div>
+                
+                <div class="card-3d bg-card-bg/50 backdrop-blur-sm p-6 rounded-xl shadow-lg border border-primary-orange/20 hover:border-primary-orange/50 transition-all duration-300">
+                    <div class="text-4xl text-primary-orange mb-4">
+                        <i class="fas fa-robot"></i>
+                    </div>
+                    <h3 class="text-2xl font-bold text-primary-orange mb-3">AI Solutions</h3>
+                    <p class="text-text-light">Implement artificial intelligence to automate processes and gain competitive advantage.</p>
+                    <button class="mt-4 text-secondary-green hover:underline flex items-center group">
+                        Learn more <i class="fas fa-arrow-right ml-2 transition-transform duration-300 group-hover:translate-x-1"></i>
+                    </button>
+                </div>
+                
+                <div class="card-3d bg-card-bg/50 backdrop-blur-sm p-6 rounded-xl shadow-lg border border-primary-orange/20 hover:border-primary-orange/50 transition-all duration-300">
+                    <div class="text-4xl text-primary-orange mb-4">
+                        <i class="fas fa-money-bill-wave"></i>
+                    </div>
+                    <h3 class="text-2xl font-bold text-primary-orange mb-3">Financial Advisory</h3>
+                    <p class="text-text-light">Strategic financial planning and investment guidance for sustainable growth.</p>
+                    <button class="mt-4 text-secondary-green hover:underline flex items-center group">
+                        Learn more <i class="fas fa-arrow-right ml-2 transition-transform duration-300 group-hover:translate-x-1"></i>
+                    </button>
+                </div>
+                
+                <div class="card-3d bg-card-bg/50 backdrop-blur-sm p-6 rounded-xl shadow-lg border border-primary-orange/20 hover:border-primary-orange/50 transition-all duration-300">
+                    <div class="text-4xl text-primary-orange mb-4">
+                        <i class="fas fa-graduation-cap"></i>
+                    </div>
+                    <h3 class="text-2xl font-bold text-primary-orange mb-3">Training Programs</h3>
+                    <p class="text-text-light">Customized training solutions to upskill your workforce and drive performance.</p>
+                    <button class="mt-4 text-secondary-green hover:underline flex items-center group">
+                        Learn more <i class="fas fa-arrow-right ml-2 transition-transform duration-300 group-hover:translate-x-1"></i>
+                    </button>
+                </div>
+            </div>
+            
+            <!-- Service CTA -->
+            <div class="text-center mt-8">
+                <button data-page="contact" class="nav-btn bg-gradient-to-r from-primary-orange to-secondary-green text-dark-blue-bg px-8 py-4 rounded-full text-lg font-bold shadow-lg transition-all duration-300 hover:shadow-xl hover:scale-105 flex items-center justify-center mx-auto group">
+                    Get a Free Consultation <i class="fas fa-chevron-right ml-3 transition-transform duration-300 group-hover:translate-x-1"></i>
+                </button>
+            </div>
+        </section>
+
+        <!-- Contact Page Section -->
+        <section id="contact-page" class="page-section">
+            <h2 class="text-4xl font-extrabold text-primary-orange mb-6 pb-2 relative">
+                <span class="relative inline-block">
+                    Connect With Us
+                    <span class="absolute bottom-0 left-0 w-full h-1 bg-gradient-to-r from-primary-orange to-secondary-green rounded-full"></span>
+                </span>
+            </h2>
+            <p class="text-lg text-text-medium leading-relaxed mb-8">
+                We'd love to hear from you! Whether you have a question about our services, need support, or just want to say hello, feel free to reach out using the details below or by filling out our contact form. Our team is ready to assist you.
+            </p>
+            
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-8 mb-8">
+                <!-- Contact Info -->
+                <div class="lg:col-span-1 space-y-6">
+                    <!-- Contact Card 1 -->
+                    <div class="card-3d bg-card-bg/50 backdrop-blur-sm p-6 rounded-xl shadow-lg border border-primary-orange/20 hover:border-primary-orange/50 transition-all duration-300">
+                        <div class="text-3xl text-primary-orange mb-4">
+                            <i class="fas fa-map-marker-alt"></i>
+                        </div>
+                        <h3 class="text-xl font-bold text-primary-orange mb-3">Our Global Office</h3>
+                        <address class="text-text-light not-italic">
+                            <p>123 Business Avenue</p>
+                            <p>Suite 456</p>
+                            <p>Metropolis, State 78901</p>
+                            <p>Country</p>
+                        </address>
+                    </div>
+                    
+                    <!-- Contact Card 2 -->
+                    <div class="card-3d bg-card-bg/50 backdrop-blur-sm p-6 rounded-xl shadow-lg border border-primary-orange/20 hover:border-primary-orange/50 transition-all duration-300">
+                        <div class="text-3xl text-primary-orange mb-4">
+                            <i class="fas fa-envelope"></i>
+                        </div>
+                        <h3 class="text-xl font-bold text-primary-orange mb-3">Email Us</h3>
+                        <p class="text-text-light mb-1">
+                            <a href="mailto:info@secondstepgroup.com" class="hover:text-primary-orange transition duration-300">info@secondstepgroup.com</a>
+                        </p>
+                        <p class="text-text-light">
+                            <a href="mailto:support@secondstepgroup.com" class="hover:text-primary-orange transition duration-300">support@secondstepgroup.com</a>
+                        </p>
+                    </div>
+                    
+                    <!-- Contact Card 3 -->
+                    <div class="card-3d bg-card-bg/50 backdrop-blur-sm p-6 rounded-xl shadow-lg border border-primary-orange/20 hover:border-primary-orange/50 transition-all duration-300">
+                        <div class="text-3xl text-primary-orange mb-4">
+                            <i class="fas fa-phone-alt"></i>
+                        </div>
+                        <h3 class="text-xl font-bold text-primary-orange mb-3">Call Us</h3>
+                        <p class="text-text-light mb-1">
+                            <a href="tel:+1234567890" class="hover:text-primary-orange transition duration-300">+1 (234) 567-890</a>
+                        </p>
+                        <p class="text-text-light">
+                            Fax: +1 (234) 567-891
+                        </p>
+                    </div>
+                    
+                    <!-- Contact Card 4 -->
+                    <div class="card-3d bg-card-bg/50 backdrop-blur-sm p-6 rounded-xl shadow-lg border border-primary-orange/20 hover:border-primary-orange/50 transition-all duration-300">
+                        <div class="text-3xl text-primary-orange mb-4">
+                            <i class="fas fa-clock"></i>
+                        </div>
+                        <h3 class="text-xl font-bold text-primary-orange mb-3">Business Hours</h3>
+                        <p class="text-text-light mb-1">Monday - Friday: 9:00 AM - 5:00 PM</p>
+                        <p class="text-text-light">Saturday - Sunday: Closed</p>
+                    </div>
+                    
+                    <!-- Social Media -->
+                    <div class="card-3d bg-card-bg/50 backdrop-blur-sm p-6 rounded-xl shadow-lg border border-primary-orange/20 hover:border-primary-orange/50 transition-all duration-300">
+                        <h3 class="text-xl font-bold text-primary-orange mb-4">Follow Us</h3>
+                        <div class="flex space-x-4">
+                            <a href="#" class="text-2xl text-primary-orange hover:text-secondary-green transition duration-300 transform hover:scale-110">
+                                <i class="fab fa-facebook-f"></i>
+                            </a>
+                            <a href="#" class="text-2xl text-primary-orange hover:text-secondary-green transition duration-300 transform hover:scale-110">
+                                <i class="fab fa-twitter"></i>
+                            </a>
+                            <a href="#" class="text-2xl text-primary-orange hover:text-secondary-green transition duration-300 transform hover:scale-110">
+                                <i class="fab fa-linkedin-in"></i>
+                            </a>
+                            <a href="#" class="text-2xl text-primary-orange hover:text-secondary-green transition duration-300 transform hover:scale-110">
+                                <i class="fab fa-instagram"></i>
+                            </a>
+                            <a href="#" class="text-2xl text-primary-orange hover:text-secondary-green transition duration-300 transform hover:scale-110">
+                                <i class="fab fa-youtube"></i>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Contact Form -->
+                <div class="lg:col-span-2">
+                    <div class="card-3d bg-card-bg/50 backdrop-blur-sm p-6 md:p-8 rounded-xl shadow-lg border border-primary-orange/20 hover:border-primary-orange/50 transition-all duration-300">
+                        <h3 class="text-2xl font-bold text-primary-orange mb-6">Send Us a Message</h3>
+                        <form id="contact-form" class="space-y-6">
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                <div>
+                                    <label for="name" class="block text-text-light text-lg font-medium mb-2">Your Name *</label>
+                                    <input type="text" id="name" name="name" required class="w-full p-4 border border-primary-orange/30 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-orange shadow-sm bg-dark-blue-bg/50 text-input-text placeholder-text-medium" placeholder="John Doe">
+                                </div>
+                                <div>
+                                    <label for="email" class="block text-text-light text-lg font-medium mb-2">Your Email *</label>
+                                    <input type="email" id="email" name="email" required class="w-full p-4 border border-primary-orange/30 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-orange shadow-sm bg-dark-blue-bg/50 text-input-text placeholder-text-medium" placeholder="john.doe@example.com">
+                                </div>
+                            </div>
+                            
+                            <div>
+                                <label for="subject" class="block text-text-light text-lg font-medium mb-2">Subject *</label>
+                                <input type="text" id="subject" name="subject" required class="w-full p-4 border border-primary-orange/30 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-orange shadow-sm bg-dark-blue-bg/50 text-input-text placeholder-text-medium" placeholder="How can we help you?">
+                            </div>
+                            
+                            <div>
+                                <label for="message" class="block text-text-light text-lg font-medium mb-2">Your Message *</label>
+                                <textarea id="message" name="message" rows="5" required class="w-full p-4 border border-primary-orange/30 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-orange shadow-sm bg-dark-blue-bg/50 text-input-text placeholder-text-medium" placeholder="Tell us about your project or inquiry..."></textarea>
+                            </div>
+                            
+                            <div class="flex items-center">
+                                <input type="checkbox" id="consent" name="consent" required class="w-5 h-5 rounded border-primary-orange/30 focus:ring-primary-orange">
+                                <label for="consent" class="ml-2 text-text-light text-sm">I agree to the <a href="#" class="text-primary-orange hover:underline">privacy policy</a> and consent to my data being processed.</label>
+                            </div>
+                            
+                            <button type="submit" class="w-full bg-gradient-to-r from-primary-orange to-secondary-green text-dark-blue-bg px-6 py-4 rounded-lg text-lg font-bold shadow-lg transition-all duration-300 hover:shadow-xl hover:scale-[1.01] flex items-center justify-center group">
+                                Send Message <i class="fas fa-paper-plane ml-3 transition-transform duration-300 group-hover:translate-x-1"></i>
+                            </button>
+                        </form>
+                    </div>
+                    
+                    <!-- Map -->
+                    <div class="card-3d bg-card-bg/50 backdrop-blur-sm mt-6 rounded-xl shadow-lg border border-primary-orange/20 hover:border-primary-orange/50 transition-all duration-300 overflow-hidden">
+                        <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3022.215573291234!2d-73.9878449241641!3d40.7484404713896!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x89c259a9b3117469%3A0xd134e199a405a163!2sEmpire%20State%20Building!5e0!3m2!1sen!2sus!4v1689876543210!5m2!1sen!2sus" 
+                                width="100%" 
+                                height="400" 
+                                style="border:0;" 
+                                allowfullscreen="" 
+                                loading="lazy" 
+                                referrerpolicy="no-referrer-when-downgrade"
+                                class="rounded-xl">
+                        </iframe>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Contact CTA -->
+            <div class="bg-gradient-to-r from-primary-orange/10 to-secondary-green/10 p-8 rounded-xl border border-primary-orange/20 text-center">
+                <h3 class="text-2xl font-bold text-primary-orange mb-4">Need Immediate Assistance?</h3>
+                <p class="text-text-light mb-6 max-w-2xl mx-auto">Our support team is available 24/7 to address urgent inquiries. Call us now for immediate help.</p>
+                <a href="tel:+1234567890" class="inline-block bg-primary-orange hover:bg-secondary-green text-dark-blue-bg px-8 py-4 rounded-full text-lg font-bold shadow-lg transition-all duration-300 hover:shadow-xl hover:scale-105">
+                    <i class="fas fa-phone-alt mr-2"></i> Call Now: +1 (234) 567-890
+                </a>
+            </div>
+        </section>
+
+        <!-- Scroll to Top Button -->
+        <button id="scroll-to-top" class="fixed bottom-8 right-8 bg-gradient-to-br from-primary-orange to-secondary-green text-dark-blue-bg p-4 rounded-full shadow-xl hover:shadow-2xl transition-all duration-300 transform hover:scale-110 z-50 hidden" aria-label="Scroll to top">
+            <i class="fas fa-chevron-up text-xl"></i>
+        </button>
+    </main>
+
+    <!-- Footer Section -->
+    <footer class="bg-dark-blue-bg/90 backdrop-blur-lg text-text-light p-8 md:p-10 border-t border-primary-orange/20">
+        <div class="container mx-auto">
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-8 mb-8">
+                <!-- Footer Column 1 -->
+                <div>
+                    <h3 class="text-xl font-bold mb-4 gradient-text">Second Step Group</h3>
+                    <p class="text-text-medium mb-4">Empowering businesses to take their next big leap with innovative solutions and strategic guidance.</p>
+                    <div class="flex space-x-4">
+                        <a href="#" class="text-primary-orange hover:text-secondary-green transition duration-300 transform hover:scale-110">
+                            <i class="fab fa-facebook-f"></i>
+                        </a>
+                        <a href="#" class="text-primary-orange hover:text-secondary-green transition duration-300 transform hover:scale-110">
+                            <i class="fab fa-twitter"></i>
+                        </a>
+                        <a href="#" class="text-primary-orange hover:text-secondary-green transition duration-300 transform hover:scale-110">
+                            <i class="fab fa-linkedin-in"></i>
+                        </a>
+                        <a href="#" class="text-primary-orange hover:text-secondary-green transition duration-300 transform hover:scale-110">
+                            <i class="fab fa-instagram"></i>
+                        </a>
+                    </div>
+                </div>
+                
+                <!-- Footer Column 2 -->
+                <div>
+                    <h3 class="text-xl font-bold text-primary-orange mb-4">Quick Links</h3>
+                    <ul class="space-y-2">
+                        <li>
+                            <button data-page="home" class="nav-btn text-text-medium hover:text-primary-orange transition duration-300 flex items-center">
+                                <i class="fas fa-chevron-right text-xs mr-2"></i> Home
+                            </button>
+                        </li>
+                        <li>
+                            <button data-page="about" class="nav-btn text-text-medium hover:text-primary-orange transition duration-300 flex items-center">
+                                <i class="fas fa-chevron-right text-xs mr-2"></i> About Us
+                            </button>
+                        </li>
+                        <li>
+                            <button data-page="services" class="nav-btn text-text-medium hover:text-primary-orange transition duration-300 flex items-center">
+                                <i class="fas fa-chevron-right text-xs mr-2"></i> Services
+                            </button>
+                        </li>
+                        <li>
+                            <button data-page="contact" class="nav-btn text-text-medium hover:text-primary-orange transition duration-300 flex items-center">
+                                <i class="fas fa-chevron-right text-xs mr-2"></i> Contact
+                            </button>
+                        </li>
+                    </ul>
+                </div>
+                
+                <!-- Footer Column 3 -->
+                <div>
+                    <h3 class="text-xl font-bold text-primary-orange mb-4">Services</h3>
+                    <ul class="space-y-2">
+                        <li>
+                            <a href="#" class="text-text-medium hover:text-primary-orange transition duration-300 flex items-center">
+                                <i class="fas fa-chevron-right text-xs mr-2"></i> Business Consulting
+                            </a>
+                        </li>
+                        <li>
+                            <a href="#" class="text-text-medium hover:text-primary-orange transition duration-300 flex items-center">
+                                <i class="fas fa-chevron-right text-xs mr-2"></i> Technology Solutions
+                            </a>
+                        </li>
+                        <li>
+                            <a href="#" class="text-text-medium hover:text-primary-orange transition duration-300 flex items-center">
+                                <i class="fas fa-chevron-right text-xs mr-2"></i> Logistics Management
+                            </a>
+                        </li>
+                        <li>
+                            <a href="#" class="text-text-medium hover:text-primary-orange transition duration-300 flex items-center">
+                                <i class="fas fa-chevron-right text-xs mr-2"></i> Healthcare Solutions
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+                
+                <!-- Footer Column 4 -->
+                <div>
+                    <h3 class="text-xl font-bold text-primary-orange mb-4">Contact Info</h3>
+                    <address class="text-text-medium not-italic">
+                        <p class="mb-2 flex items-start">
+                            <i class="fas fa-map-marker-alt text-primary-orange mr-3 mt-1"></i>
+                            <span>123 Business Avenue, Suite 456<br>Metropolis, State 78901</span>
+                        </p>
+                        <p class="mb-2 flex items-center">
+                            <i class="fas fa-phone-alt text-primary-orange mr-3"></i>
+                            <a href="tel:+1234567890" class="hover:text-primary-orange transition duration-300">+1 (234) 567-890</a>
+                        </p>
+                        <p class="mb-2 flex items-center">
+                            <i class="fas fa-envelope text-primary-orange mr-3"></i>
+                            <a href="mailto:info@secondstepgroup.com" class="hover:text-primary-orange transition duration-300">info@secondstepgroup.com</a>
+                        </p>
+                        <p class="flex items-center">
+                            <i class="fas fa-clock text-primary-orange mr-3"></i>
+                            <span>Mon-Fri: 9AM-5PM</span>
+                        </p>
+                    </address>
+                </div>
+            </div>
+            
+            <!-- Footer Bottom -->
+            <div class="border-t border-primary-orange/20 pt-6 flex flex-col md:flex-row justify-between items-center">
+                <p class="text-text-medium text-sm mb-4 md:mb-0">&copy; <span id="current-year"></span> Second Step Group. All rights reserved.</p>
+                <div class="flex space-x-4">
+                    <a href="#" class="text-text-medium hover:text-primary-orange transition duration-300 text-sm">Privacy Policy</a>
+                    <a href="#" class="text-text-medium hover:text-primary-orange transition duration-300 text-sm">Terms of Service</a>
+                    <a href="#" class="text-text-medium hover:text-primary-orange transition duration-300 text-sm">Cookie Policy</a>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // --- Global Variables ---
+        let currentPage = 'home';
+        const mainContent = document.getElementById('main-content');
+        const mobileMenu = document.getElementById('mobile-menu');
+        const mobileMenuToggle = document.getElementById('mobile-menu-toggle');
+        const mobileMenuClose = document.getElementById('mobile-menu-close');
+        const navButtons = document.querySelectorAll('.nav-btn');
+        const scrollToTopBtn = document.getElementById('scroll-to-top');
+        const serviceTabBtns = document.querySelectorAll('.service-tab-btn');
+        const serviceTabContents = document.querySelectorAll('.service-tab-content');
+        const testimonialTrack = document.querySelector('.testimonial-track');
+        const testimonialSlides = document.querySelectorAll('.testimonial-slide');
+        const testimonialPrev = document.querySelector('.testimonial-prev');
+        const testimonialNext = document.querySelector('.testimonial-next');
+        let currentTestimonial = 0;
+        let counterElements = document.querySelectorAll('[data-counter]');
+        let countersInitialized = false;
+
+        // --- Initialize Custom Cursor ---
+        function initCustomCursor() {
+            // Remove the default cursor effect from the original code
+            // We'll use the cursor-effects library for more advanced effects
+            
+            // Initialize custom cursor effects
+            if (typeof cursors !== 'undefined') {
+                // Bubble cursor effect for interactive elements
+                const bubbleCursor = new cursors.bubbleCursor({
+                    color: '#FF8C00',
+                    duration: 0.3,
+                    size: 4
+                });
+                bubbleCursor.attach();
+                
+                // Change cursor effect when hovering interactive elements
+                document.querySelectorAll('button, a, .interactive-element, .card-3d').forEach(el => {
+                    el.addEventListener('mouseenter', () => {
+                        bubbleCursor.setOptions({
+                            color: '#7CFC00',
+                            size: 6
+                        });
+                    });
+                    el.addEventListener('mouseleave', () => {
+                        bubbleCursor.setOptions({
+                            color: '#FF8C00',
+                            size: 4
+                        });
+                    });
+                });
+            }
+        }
+
+        // --- Initialize Three.js Hero Animation ---
+        function initHeroAnimation() {
+            const container = document.getElementById('hero-animation');
+            if (!container) return;
+
+            // Scene setup
+            const scene = new THREE.Scene();
+            const camera = new THREE.PerspectiveCamera(75, container.clientWidth / container.clientHeight, 0.1, 1000);
+            const renderer = new THREE.WebGLRenderer({ alpha: true, antialias: true });
+            renderer.setSize(container.clientWidth, container.clientHeight);
+            container.appendChild(renderer.domElement);
+
+            // Particles
+            const particleCount = 1000;
+            const particles = new THREE.BufferGeometry();
+            const positions = new Float32Array(particleCount * 3);
+            const colors = new Float32Array(particleCount * 3);
+            const sizes = new Float32Array(particleCount);
+
+            // Primary and secondary colors from CSS variables
+            const primaryColor = new THREE.Color(getComputedStyle(document.documentElement).getPropertyValue('--primary-orange'));
+            const secondaryColor = new THREE.Color(getComputedStyle(document.documentElement).getPropertyValue('--secondary-green'));
+
+            for (let i = 0; i < particleCount; i++) {
+                // Positions
+                positions[i * 3] = (Math.random() - 0.5) * 2000;
+                positions[i * 3 + 1] = (Math.random() - 0.5) * 2000;
+                positions[i * 3 + 2] = (Math.random() - 0.5) * 2000;
+
+                // Colors - alternate between primary and secondary
+                const color = i % 2 === 0 ? primaryColor : secondaryColor;
+                colors[i * 3] = color.r;
+                colors[i * 3 + 1] = color.g;
+                colors[i * 3 + 2] = color.b;
+
+                // Sizes
+                sizes[i] = Math.random() * 10 + 5;
+            }
+
+            particles.setAttribute('position', new THREE.BufferAttribute(positions, 3));
+            particles.setAttribute('color', new THREE.BufferAttribute(colors, 3));
+            particles.setAttribute('size', new THREE.BufferAttribute(sizes, 1));
+
+            const particleMaterial = new THREE.PointsMaterial({
+                size: 5,
+                vertexColors: true,
+                transparent: true,
+                opacity: 0.8,
+                blending: THREE.AdditiveBlending,
+                sizeAttenuation: true
+            });
+
+            const particleSystem = new THREE.Points(particles, particleMaterial);
+            scene.add(particleSystem);
+
+            // Camera position
+            camera.position.z = 1000;
+
+            // Mouse interaction
+            let mouseX = 0;
+            let mouseY = 0;
+            document.addEventListener('mousemove', (event) => {
+                mouseX = (event.clientX / window.innerWidth) * 2 - 1;
+                mouseY = -(event.clientY / window.innerHeight) * 2 + 1;
+            });
+
+            // Animation loop
+            function animate() {
+                requestAnimationFrame(animate);
+
+                // Rotate particles
+                particleSystem.rotation.x += 0.0005;
+                particleSystem.rotation.y += 0.001;
+
+                // Move camera based on mouse position
+                camera.position.x += (mouseX * 500 - camera.position.x) * 0.05;
+                camera.position.y += (mouseY * 500 - camera.position.y) * 0.05;
+                camera.lookAt(scene.position);
+
+                renderer.render(scene, camera);
+            }
+
+            // Handle window resize
+            window.addEventListener('resize', () => {
+                camera.aspect = container.clientWidth / container.clientHeight;
+                camera.updateProjectionMatrix();
+                renderer.setSize(container.clientWidth, container.clientHeight);
+            });
+
+            animate();
+        }
+
+        // --- Initialize Particle.js Background ---
+        function initParticles() {
+            // Only initialize if particles.js is loaded
+            if (typeof particlesJS !== 'undefined') {
+                particlesJS('particles-js', {
+                    "particles": {
+                        "number": {
+                            "value": 80,
+                            "density": {
+                                "enable": true,
+                                "value_area": 800
+                            }
+                        },
+                        "color": {
+                            "value": "#FF8C00"
+                        },
+                        "shape": {
+                            "type": "circle",
+                            "stroke": {
+                                "width": 0,
+                                "color": "#000000"
+                            },
+                            "polygon": {
+                                "nb_sides": 5
+                            }
+                        },
+                        "opacity": {
+                            "value": 0.3,
+                            "random": true,
+                            "anim": {
+                                "enable": true,
+                                "speed": 1,
+                                "opacity_min": 0.1,
+                                "sync": false
+                            }
+                        },
+                        "size": {
+                            "value": 3,
+                            "random": true,
+                            "anim": {
+                                "enable": true,
+                                "speed": 2,
+                                "size_min": 0.1,
+                                "sync": false
+                            }
+                        },
+                        "line_linked": {
+                            "enable": true,
+                            "distance": 150,
+                            "color": "#7CFC00",
+                            "opacity": 0.2,
+                            "width": 1
+                        },
+                        "move": {
+                            "enable": true,
+                            "speed": 1,
+                            "direction": "none",
+                            "random": true,
+                            "straight": false,
+                            "out_mode": "out",
+                            "bounce": false,
+                            "attract": {
+                                "enable": true,
+                                "rotateX": 600,
+                                "rotateY": 1200
+                            }
+                        }
+                    },
+                    "interactivity": {
+                        "detect_on": "canvas",
+                        "events": {
+                            "onhover": {
+                                "enable": true,
+                                "mode": "grab"
+                            },
+                            "onclick": {
+                                "enable": true,
+                                "mode": "push"
+                            },
+                            "resize": true
+                        },
+                        "modes": {
+                            "grab": {
+                                "distance": 140,
+                                "line_linked": {
+                                    "opacity": 0.5
+                                }
+                            },
+                            "push": {
+                                "particles_nb": 4
+                            }
+                        }
+                    },
+                    "retina_detect": true
+                });
+            }
+        }
+
+        // --- Navigation Functions ---
+        function navigateToPage(pageId) {
+            // Hide all page sections
+            document.querySelectorAll('.page-section').forEach(section => {
+                section.classList.remove('active');
+            });
+
+            // Show the target page section with GSAP animation
+            const targetPage = document.getElementById(`${pageId}-page`);
+            if (targetPage) {
+                targetPage.classList.add('active');
+                currentPage = pageId;
+                
+                // Scroll to top of the main content area
+                if (mainContent) {
+                    mainContent.scrollTo({ top: 0, behavior: 'smooth' });
+                }
+                
+                // Animate in the new content
+                gsap.from(targetPage, {
+                    opacity: 0,
+                    y: 50,
+                    duration: 0.8,
+                    ease: "power3.out"
+                });
+            }
+
+            // Close mobile menu if open
+            if (mobileMenu.classList.contains('translate-x-0')) {
+                toggleMobileMenu();
+            }
+        }
+
+        function toggleMobileMenu() {
+            mobileMenu.classList.toggle('translate-x-full');
+            mobileMenu.classList.toggle('translate-x-0');
+            mobileMenuToggle.classList.toggle('active');
+            
+            // Animate the menu with GSAP
+            if (mobileMenu.classList.contains('translate-x-0')) {
+                gsap.from(mobileMenu, {
+                    x: 300,
+                    opacity: 0,
+                    duration: 0.3,
+                    ease: "power3.out"
+                });
+            }
+        }
+
+        // --- Service Tabs Functionality ---
+        function switchServiceTab(tabId) {
+            // Hide all tab contents
+            serviceTabContents.forEach(content => {
+                content.classList.remove('active');
+                content.classList.add('hidden');
+            });
+
+            // Deactivate all tab buttons
+            serviceTabBtns.forEach(btn => {
+                btn.classList.remove('active');
+                btn.classList.remove('border-primary-orange');
+            });
+
+            // Activate selected tab
+            const selectedTab = document.getElementById(tabId);
+            if (selectedTab) {
+                selectedTab.classList.remove('hidden');
+                selectedTab.classList.add('active');
+                
+                // Animate content in
+                gsap.from(selectedTab, {
+                    opacity: 0,
+                    y: 20,
+                    duration: 0.5,
+                    ease: "power2.out"
+                });
+            }
+
+            // Activate corresponding button
+            const activeBtn = document.querySelector(`.service-tab-btn[data-tab="${tabId}"]`);
+            if (activeBtn) {
+                activeBtn.classList.add('active');
+                activeBtn.classList.add('border-primary-orange');
+            }
+        }
+
+        // --- Testimonial Slider ---
+        function updateTestimonialSlider() {
+            const slideWidth = testimonialSlides[0].clientWidth;
+            testimonialTrack.style.transform = `translateX(-${currentTestimonial * slideWidth}px)`;
+            
+            // Add transition effect
+            testimonialTrack.style.transition = 'transform 0.5s ease-in-out';
+        }
+
+        function nextTestimonial() {
+            if (currentTestimonial < testimonialSlides.length - 1) {
+                currentTestimonial++;
+            } else {
+                currentTestimonial = 0;
+            }
+            updateTestimonialSlider();
+        }
+
+        function prevTestimonial() {
+            if (currentTestimonial > 0) {
+                currentTestimonial--;
+            } else {
+                currentTestimonial = testimonialSlides.length - 1;
+            }
+            updateTestimonialSlider();
+        }
+
+        // --- Animate Counter Numbers ---
+        function animateCounters() {
+            if (countersInitialized) return;
+            
+            counterElements.forEach(counter => {
+                const target = +counter.getAttribute('data-counter');
+                const suffix = counter.textContent.includes('+') ? '+' : 
+                              counter.textContent.includes('%') ? '%' : '';
+                const duration = 2000;
+                const startTime = Date.now();
+                
+                const updateCounter = () => {
+                    const currentTime = Date.now();
+                    const elapsed = currentTime - startTime;
+                    const progress = Math.min(elapsed / duration, 1);
+                    const currentValue = Math.floor(progress * target);
+                    
+                    counter.textContent = currentValue + suffix;
+                    
+                    if (progress < 1) {
+                        requestAnimationFrame(updateCounter);
+                    }
+                };
+                
+                // Only start animation when element is in viewport
+                const observer = new IntersectionObserver((entries) => {
+                    if (entries[0].isIntersecting) {
+                        updateCounter();
+                        observer.unobserve(counter);
+                    }
+                }, { threshold: 0.5 });
+                
+                observer.observe(counter);
+            });
+            
+            countersInitialized = true;
+        }
+
+        // --- Scroll to Top Function ---
+        function scrollToTop() {
+            if (mainContent) {
+                mainContent.scrollTo({
+                    top: 0,
+                    behavior: 'smooth'
+                });
+            }
+        }
+
+        // --- Form Submission Handling ---
+        function handleFormSubmit(event) {
+            event.preventDefault();
+            const form = event.target;
+            const formData = new FormData(form);
+            const submitBtn = form.querySelector('button[type="submit"]');
+            const originalBtnText = submitBtn.innerHTML;
+            
+            // Show loading state
+            submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i> Sending...';
+            submitBtn.disabled = true;
+            
+            // Simulate form submission (replace with actual AJAX call)
+            setTimeout(() => {
+                // Reset form
+                form.reset();
+                
+                // Show success message
+                submitBtn.innerHTML = '<i class="fas fa-check mr-2"></i> Message Sent!';
+                
+                // Reset button after delay
+                setTimeout(() => {
+                    submitBtn.innerHTML = originalBtnText;
+                    submitBtn.disabled = false;
+                }, 3000);
+                
+                // Show notification
+                showNotification('Your message has been sent successfully! We will get back to you soon.', 'success');
+            }, 1500);
+        }
+
+        // --- Notification System ---
+        function showNotification(message, type = 'info') {
+            const notification = document.createElement('div');
+            notification.className = `fixed top-4 right-4 p-4 rounded-lg shadow-xl z-50 flex items-center ${
+                type === 'success' ? 'bg-secondary-green text-dark-blue-bg' : 
+                type === 'error' ? 'bg-red-500 text-white' : 
+                'bg-primary-orange text-dark-blue-bg'
+            }`;
+            
+            notification.innerHTML = `
+                <i class="fas ${
+                    type === 'success' ? 'fa-check-circle' : 
+                    type === 'error' ? 'fa-exclamation-circle' : 
+                    'fa-info-circle'
+                } mr-3"></i>
+                <span>${message}</span>
+                <button class="ml-4" onclick="this.parentElement.remove()">
+                    <i class="fas fa-times"></i>
+                </button>
+            `;
+            
+            document.body.appendChild(notification);
+            
+            // Auto-remove after 5 seconds
+            setTimeout(() => {
+                notification.remove();
+            }, 5000);
+        }
+
+        // --- Event Listeners ---
+        document.addEventListener('DOMContentLoaded', () => {
+            // Set current year in footer
+            document.getElementById('current-year').textContent = new Date().getFullYear();
+            
+            // Initialize page to home
+            navigateToPage('home');
+            
+            // Initialize animations and effects
+            initCustomCursor();
+            initHeroAnimation();
+            initParticles();
+            
+            // Set up service tabs
+            if (serviceTabBtns.length > 0) {
+                serviceTabBtns[0].click(); // Activate first tab by default
+            }
+            
+            // Set up testimonial slider
+            if (testimonialSlides.length > 0) {
+                setInterval(nextTestimonial, 5000); // Auto-advance every 5 seconds
+            }
+        });
+
+        // Navigation buttons
+        navButtons.forEach(button => {
+            button.addEventListener('click', (event) => {
+                const page = event.currentTarget.dataset.page;
+                if (page) {
+                    navigateToPage(page);
+                }
+            });
+        });
+
+        // Mobile menu toggle
+        if (mobileMenuToggle) {
+            mobileMenuToggle.addEventListener('click', toggleMobileMenu);
+        }
+        if (mobileMenuClose) {
+            mobileMenuClose.addEventListener('click', toggleMobileMenu);
+        }
+
+        // Service tab buttons
+        serviceTabBtns.forEach(btn => {
+            btn.addEventListener('click', () => {
+                const tabId = btn.dataset.tab;
+                switchServiceTab(tabId);
+            });
+        });
+
+        // Testimonial navigation
+        if (testimonialPrev && testimonialNext) {
+            testimonialPrev.addEventListener('click', prevTestimonial);
+            testimonialNext.addEventListener('click', nextTestimonial);
+        }
+
+        // Scroll to top button
+        if (mainContent) {
+            mainContent.addEventListener('scroll', () => {
+                if (mainContent.scrollTop > 300) {
+                    scrollToTopBtn.classList.remove('hidden');
+                    gsap.to(scrollToTopBtn, { opacity: 1, duration: 0.3 });
+                } else {
+                    gsap.to(scrollToTopBtn, { 
+                        opacity: 0, 
+                        duration: 0.3,
+                        onComplete: () => scrollToTopBtn.classList.add('hidden')
+                    });
+                }
+                
+                // Animate counters when they come into view
+                if (!countersInitialized && mainContent.scrollTop > 400) {
+                    animateCounters();
+                }
+            });
+        }
+
+        if (scrollToTopBtn) {
+            scrollToTopBtn.addEventListener('click', scrollToTop);
+        }
+
+        // Form submission
+        const contactForm = document.getElementById('contact-form');
+        if (contactForm) {
+            contactForm.addEventListener('submit', handleFormSubmit);
+        }
+
+        // Intersection Observer for animations
+        const animateOnScroll = (entries, observer) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    gsap.to(entry.target, {
+                        opacity: 1,
+                        y: 0,
+                        duration: 0.8,
+                        ease: "power3.out"
+                    });
+                    observer.unobserve(entry.target);
+                }
+            });
+        };
+
+        const observer = new IntersectionObserver(animateOnScroll, {
+            threshold: 0.1
+        });
+
+        document.querySelectorAll('.card-3d, .interactive-element, .page-section').forEach(el => {
+            observer.observe(el);
+        });
+
+        // Hover effects for 3D cards
+        document.querySelectorAll('.card-3d').forEach(card => {
+            card.addEventListener('mousemove', (e) => {
+                const rect = card.getBoundingClientRect();
+                const x = e.clientX - rect.left;
+                const y = e.clientY - rect.top;
+                const centerX = rect.width / 2;
+                const centerY = rect.height / 2;
+                const angleX = (y - centerY) / 20;
+                const angleY = (centerX - x) / 20;
+                
+                card.style.transform = `perspective(1000px) rotateX(${angleX}deg) rotateY(${angleY}deg) translateZ(20px)`;
+            });
+            
+            card.addEventListener('mouseleave', () => {
+                card.style.transform = 'perspective(1000px) rotateX(0) rotateY(0) translateZ(0)';
+            });
+        });
+
+        // Initialize counters when page loads if already scrolled
+        if (mainContent && mainContent.scrollTop > 400) {
+            animateCounters();
+        }
+    </script>
+</body>
+</html>
